@@ -41,6 +41,11 @@ export const createProductSchema = z.object({
     .string()
     .optional()
     .or(z.literal("")),
+  imageUrl: z
+    .string()
+    .url("URL gambar tidak valid")
+    .optional()
+    .or(z.literal("")),
 });
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;
@@ -85,6 +90,11 @@ export const updateProductSchema = z.object({
     .optional(),
   supplierId: z
     .string()
+    .optional()
+    .or(z.literal("")),
+  imageUrl: z
+    .string()
+    .url("URL gambar tidak valid")
     .optional()
     .or(z.literal("")),
 });

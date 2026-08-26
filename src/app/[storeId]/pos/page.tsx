@@ -9,40 +9,42 @@ export default async function PosPage({
   params: Promise<{ storeId: string }>;
 }) {
   const { storeId } = await params;
-  
+
   const storeDbId = await validateStoreAccess(storeId);
+
   if (!storeDbId) {
     redirect("/");
   }
 
-  // Fetch all products for the catalog
   const rawProducts = await db.product.findMany({
-    where: { storeId: storeDbId },
-    include: {
-      unit: { select: { name: true } }
+    where: {
+      storeId: storeDbId,
     },
-    orderBy: { name: "asc" }
+    include: {
+      unit: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
   });
 
-  // Serialize Decimal to number for Client Components
-  const products = rawProducts.map(p => ({
+  const products = rawProducts.map((p) => ({
     ...p,
     buyPrice: Number(p.buyPrice),
     sellPrice: Number(p.sellPrice),
   }));
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-slate-50 overflow-hidden">
-      {/* <div className="bg-slate-900 text-white px-4 h-14 flex items-center justify-between shrink-0 shadow-md relative z-10">
-        <h1 className="font-bold text-lg tracking-tight">Mode Kasir (POS)</h1>
-        <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-xs font-medium text-slate-300">Sistem Online</span>
-        </div>
-      </div> */}
-      
+    <div className="flex h-full flex-1 flex-col overflow-hidden bg-[#F5F5DC]/40">
       {/* @ts-expect-error - Decimal vs Number type mismatch, handled at runtime */}
-      <PosClient storeId={storeId} products={products} />
+      <PosClient
+        storeId={storeId}
+        products={products}
+      />
     </div>
   );
 }

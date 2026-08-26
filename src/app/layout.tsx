@@ -19,10 +19,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="min-h-full flex flex-col">
         <NextTopLoader 
-          color="#4f46e5" 
+          color="#d87840ff" 
           showSpinner={false} 
           height={3}
-          shadow="0 0 10px #4f46e5,0 0 5px #4f46e5"
+          shadow="0 0 10px #e91f04ff,0 0 5px #9c1700ff"
         />
         {children}
       </body>

@@ -1,142 +1,299 @@
 "use client";
 
 import { useState } from "react";
-import { Receipt, Calendar, CreditCard, ChevronRight, X, Package } from "lucide-react";
+import {
+  Calendar,
+  CheckCircle2,
+  ChevronRight,
+  CreditCard,
+  Package,
+  Receipt,
+  X,
+} from "lucide-react";
 import { formatRupiah } from "@/lib/format";
 
 interface OrderCardProps {
-  order: any; // Serialized order from Prisma
+  order: any;
 }
 
 export function OrderCard({ order }: OrderCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const itemCount = order.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+  const itemCount = order.items.reduce(
+    (sum: number, item: any) => sum + item.quantity,
+    0
+  );
+
+  const formattedDate = new Date(order.createdAt).toLocaleString("id-ID", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 
   return (
     <>
-      <button 
+      {/* =========================================================
+          ORDER CARD
+      ========================================================= */}
+      <button
+        type="button"
         onClick={() => setIsOpen(true)}
-        className="w-full bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col active:scale-[0.98] transition-transform text-left"
+        className="group w-full rounded-2xl border border-[#EDE8D2] bg-white p-4 text-left shadow-sm transition-all hover:border-[#FBC02D]/60 hover:shadow-md active:scale-[0.99]"
       >
-        <div className="flex justify-between items-center w-full mb-3">
-          <div className="flex items-center gap-2">
-            <div className="size-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500">
-              <Receipt className="size-4" />
+        {/* Header */}
+        <div className="flex w-full items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FFF0D6] text-[#FF8F00] transition-colors group-hover:bg-[#FF8F00] group-hover:text-white">
+              <Receipt className="size-5" />
             </div>
-            <div>
-              <h3 className="font-bold text-slate-800 text-sm">{order.invoiceNo}</h3>
-              <p className="text-[10px] text-slate-500 flex items-center gap-1">
+
+            <div className="min-w-0">
+              <h3 className="truncate text-sm font-bold text-slate-800">
+                {order.invoiceNo}
+              </h3>
+
+              <p className="mt-1 flex items-center gap-1.5 text-[10px] text-slate-400">
                 <Calendar className="size-3" />
-                {new Date(order.createdAt).toLocaleString("id-ID", { 
-                  dateStyle: "medium", 
-                  timeStyle: "short" 
-                })}
+                {formattedDate}
               </p>
             </div>
           </div>
-          <ChevronRight className="size-5 text-slate-300" />
+
+          <ChevronRight className="size-5 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-[#FF8F00]" />
         </div>
 
-        <div className="flex justify-between items-end w-full pt-3 border-t border-slate-50">
+        {/* Divider */}
+        <div className="my-3 border-t border-slate-100" />
+
+        {/* Bottom Info */}
+        <div className="flex items-end justify-between gap-3">
+
           <div>
-            <span className="text-xs font-medium text-slate-500">{itemCount} item</span>
-            <div className="mt-1">
-              <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-1 rounded-md">
+            <p className="text-xs font-medium text-slate-500">
+              {itemCount} item
+              {itemCount !== 1 ? "s" : ""}
+            </p>
+
+            <div className="mt-2">
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-[#F5F5DC] px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#A66A00]">
                 <CreditCard className="size-3" />
                 {order.paymentType}
               </span>
             </div>
           </div>
+
           <div className="text-right">
-            <span className="text-[10px] font-medium text-slate-500">Total</span>
-            <p className="font-extrabold text-indigo-600 text-base">
-              {formatRupiah(Number(order.totalAmount))}
+            <span className="text-[10px] font-medium text-slate-400">
+              Total
+            </span>
+
+            <p className="mt-0.5 text-base font-black text-[#FF8F00]">
+              {formatRupiah(order.totalAmount)}
             </p>
           </div>
+
         </div>
       </button>
 
-      {/* Detail Modal */}
+      {/* =========================================================
+          DETAIL MODAL
+      ========================================================= */}
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex flex-col justify-end bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div 
-            className="absolute inset-0" 
-            onClick={() => setIsOpen(false)} 
+        <div className="fixed inset-0 z-[100] flex flex-col justify-end bg-slate-900/40 backdrop-blur-[2px] animate-in fade-in duration-200">
+
+          {/* Overlay */}
+          <button
+            type="button"
+            aria-label="Tutup detail transaksi"
+            className="absolute inset-0 cursor-default"
+            onClick={() => setIsOpen(false)}
           />
-          <div className="relative bg-white rounded-t-3xl w-full max-h-[85vh] flex flex-col animate-in slide-in-from-bottom-full duration-300">
-            
-            {/* Handle for drag (visual only) */}
-            <div className="w-full flex justify-center pt-3 pb-1 shrink-0">
-              <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
+
+          {/* Modal */}
+          <div className="relative flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-[28px] bg-white shadow-2xl animate-in slide-in-from-bottom-full duration-300">
+
+            {/* Handle */}
+            <div className="flex shrink-0 justify-center pb-2 pt-3">
+              <div className="h-1.5 w-12 rounded-full bg-slate-200" />
             </div>
 
-            <div className="flex items-center justify-between px-5 pb-4 border-b border-slate-100 shrink-0">
-              <div>
-                <h2 className="font-bold text-lg text-slate-800">Detail Transaksi</h2>
-                <p className="text-xs font-medium text-slate-500">{order.invoiceNo}</p>
+            {/* Modal Header */}
+            <div className="flex shrink-0 items-center justify-between border-b border-[#F5F5DC] px-5 pb-4 pt-2">
+
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-[#FFF0D6] text-[#FF8F00]">
+                  <Receipt className="size-5" />
+                </div>
+
+                <div>
+                  <h2 className="text-base font-bold text-slate-900">
+                    Detail Transaksi
+                  </h2>
+
+                  <p className="mt-0.5 text-[11px] font-medium text-slate-400">
+                    {order.invoiceNo}
+                  </p>
+                </div>
               </div>
-              <button 
+
+              <button
+                type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-2 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-full transition-colors active:scale-95"
+                className="flex size-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 active:scale-95"
               >
-                <X className="size-5" />
+                <X className="size-4" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-5">
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Tanggal Waktu</span>
-                  <span className="font-semibold text-slate-700">
-                    {new Date(order.createdAt).toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" })}
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto px-5 py-5">
+
+              {/* Transaction Info */}
+              <div className="rounded-2xl border border-[#EDE8D2] bg-[#F5F5DC]/40 p-4">
+
+                <div className="flex items-center justify-between gap-4 text-sm">
+                  <span className="text-slate-500">
+                    Tanggal & Waktu
+                  </span>
+
+                  <span className="text-right text-xs font-semibold text-slate-700">
+                    {new Date(order.createdAt).toLocaleString("id-ID", {
+                      dateStyle: "long",
+                      timeStyle: "short",
+                    })}
                   </span>
                 </div>
+
+                <div className="my-3 border-t border-[#EDE8D2]" />
+
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Metode Pembayaran</span>
-                  <span className="font-bold text-indigo-600 uppercase">
+                  <span className="text-slate-500">
+                    Pembayaran
+                  </span>
+
+                  <span className="rounded-md bg-[#FFF0D6] px-2 py-1 text-[10px] font-bold uppercase text-[#C27800]">
                     {order.paymentType}
                   </span>
                 </div>
+
+                <div className="my-3 border-t border-[#EDE8D2]" />
+
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-500">Status</span>
-                  <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">
+                  <span className="text-slate-500">
+                    Status
+                  </span>
+
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
+                    <CheckCircle2 className="size-3" />
                     BERHASIL
                   </span>
                 </div>
+
               </div>
 
-              <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2 text-sm">
-                <Package className="size-4" />
-                Daftar Item
-              </h4>
-              
-              <div className="space-y-3 bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                {order.items.map((item: any) => (
-                  <div key={item.id} className="flex justify-between items-start gap-4">
-                    <div className="flex-1">
-                      <p className="font-semibold text-slate-800 text-sm leading-tight mb-1">
-                        {item.product.name}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {item.quantity} x {formatRupiah(Number(item.sellPrice))}
-                      </p>
+              {/* Items */}
+              <div className="mt-6">
+
+                <div className="mb-3 flex items-center justify-between">
+                  <h4 className="flex items-center gap-2 text-sm font-bold text-slate-800">
+                    <Package className="size-4 text-[#FF8F00]" />
+                    Daftar Item
+                  </h4>
+
+                  <span className="text-[10px] font-medium text-slate-400">
+                    {itemCount} item
+                  </span>
+                </div>
+
+                <div className="overflow-hidden rounded-2xl border border-[#EDE8D2]">
+
+                  {order.items.map((item: any, index: number) => (
+                    <div
+                      key={item.id}
+                      className={`flex items-start justify-between gap-4 p-4 ${
+                        index !== order.items.length - 1
+                          ? "border-b border-[#F5F5DC]"
+                          : ""
+                      }`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold leading-tight text-slate-800">
+                          {item.product.name}
+                        </p>
+
+                        <p className="mt-1 text-xs text-slate-400">
+                          {item.quantity} ×{" "}
+                          {formatRupiah(item.sellPrice)}
+                        </p>
+                      </div>
+
+                      <span className="shrink-0 text-sm font-bold text-slate-800">
+                        {formatRupiah(item.subtotal)}
+                      </span>
                     </div>
-                    <span className="font-bold text-slate-900 text-sm whitespace-nowrap">
-                      {formatRupiah(Number(item.subtotal))}
-                    </span>
-                  </div>
-                ))}
+                  ))}
+
+                </div>
               </div>
+
+              {/* Payment Breakdown */}
+              <div className="mt-6 space-y-2.5 text-sm">
+
+                <div className="flex justify-between">
+                  <span className="text-slate-500">
+                    Total Belanja
+                  </span>
+
+                  <span className="font-semibold text-slate-700">
+                    {formatRupiah(order.totalAmount)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-slate-500">
+                    Dibayar
+                  </span>
+
+                  <span className="font-semibold text-slate-700">
+                    {formatRupiah(order.paidAmount)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-slate-500">
+                    Kembalian
+                  </span>
+
+                  <span className="font-semibold text-emerald-600">
+                    {formatRupiah(order.changeAmount)}
+                  </span>
+                </div>
+
+              </div>
+
             </div>
 
-            <div className="p-5 bg-white border-t border-slate-100 shrink-0">
-              <div className="flex justify-between items-center bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                <span className="font-bold text-indigo-900 text-sm">Total Belanja</span>
-                <span className="font-black text-indigo-700 text-xl">
-                  {formatRupiah(Number(order.totalAmount))}
+            {/* Total Footer */}
+            <div className="shrink-0 border-t border-[#EDE8D2] bg-white p-5">
+
+              <div className="flex items-center justify-between rounded-2xl bg-gradient-to-r from-[#FFF8D6] to-[#FFF0D6] p-4 ring-1 ring-[#FBC02D]/20">
+
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#A66A00]">
+                    Total Transaksi
+                  </p>
+
+                  <p className="mt-0.5 text-xs text-[#C27800]">
+                    Pembayaran berhasil
+                  </p>
+                </div>
+
+                <span className="text-xl font-black text-[#FF8F00]">
+                  {formatRupiah(order.totalAmount)}
                 </span>
+
               </div>
+
             </div>
 
           </div>

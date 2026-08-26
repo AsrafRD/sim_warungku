@@ -3,6 +3,7 @@
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -21,40 +22,89 @@ export function DashboardChart({
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
-          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+          margin={{
+            top: 10,
+            right: 10,
+            left: 0,
+            bottom: 0,
+          }}
         >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-          <XAxis 
-            dataKey="date" 
-            tick={{ fontSize: 10, fill: "#94a3b8" }} 
-            axisLine={false} 
-            tickLine={false} 
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="#f1f5f9"
           />
-          <YAxis 
-            tick={{ fontSize: 10, fill: "#94a3b8" }} 
-            axisLine={false} 
-            tickLine={false} 
-            tickFormatter={(value) => `Rp${value / 1000}k`}
-          />
-          <Tooltip 
-            cursor={{ fill: "#f8fafc" }}
-            contentStyle={{ 
-              borderRadius: '12px', 
-              border: 'none', 
-              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-              fontSize: '12px',
-              fontWeight: 600
+
+          <XAxis
+            dataKey="date"
+            tick={{
+              fontSize: 10,
+              fill: "#94a3b8",
             }}
-            formatter={(value: any) => [formatRupiah(Number(value)), "Omset"]}
-            labelStyle={{ color: '#64748b', marginBottom: '4px' }}
+            axisLine={false}
+            tickLine={false}
+            tickMargin={8}
           />
-          <Bar 
-            dataKey="revenue" 
-            fill="#4f46e5" 
-            radius={[4, 4, 0, 0]} 
+
+          <YAxis
+            tick={{
+              fontSize: 10,
+              fill: "#94a3b8",
+            }}
+            axisLine={false}
+            tickLine={false}
+            width={45}
+            tickFormatter={(value: number) => {
+              if (value >= 1_000_000) {
+                return `Rp${value / 1_000_000}jt`;
+              }
+
+              if (value >= 1_000) {
+                return `Rp${value / 1_000}k`;
+              }
+
+              return `Rp${value}`;
+            }}
+          />
+
+          <Tooltip
+            cursor={{ fill: "#f8fafc" }}
+            contentStyle={{
+              borderRadius: "12px",
+              border: "none",
+              boxShadow:
+                "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+              fontSize: "12px",
+              fontWeight: 600,
+            }}
+            formatter={(value) => [
+              formatRupiah(Number(value)),
+              "Omset",
+            ]}
+            labelStyle={{
+              color: "#64748b",
+              marginBottom: "4px",
+            }}
+          />
+
+          <Bar
+            dataKey="revenue"
+            radius={[6, 6, 0, 0]}
             maxBarSize={40}
-            animationDuration={1000}
-          />
+            animationDuration={700}
+            fill="#10b981"
+          >
+            {data.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={
+                  entry.revenue > 0
+                    ? "#b94510ff"
+                    : "#e2e8f0"
+                }
+              />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

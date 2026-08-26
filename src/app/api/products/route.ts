@@ -118,6 +118,10 @@ export async function POST(req: Request) {
     const product = await db.product.create({
       data: {
         ...data,
+        categoryId: data.categoryId || null,
+        unitId: data.unitId || null,
+        supplierId: data.supplierId || null,
+        imageUrl: data.imageUrl || null,
         storeId: storeDbId,
       },
     });

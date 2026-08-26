@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatRupiah } from "@/lib/format";
@@ -19,8 +20,12 @@ export function ProductCard({ product, storeId }: ProductCardProps) {
       href={`/${storeId}/products/${product.id}/edit`}
       className="flex items-center gap-4 bg-white px-4 py-3 border-b border-slate-100 active:bg-slate-50 transition-colors"
     >
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
-        <Package className="size-6" />
+      <div className="relative flex h-12 w-12 shrink-0 overflow-hidden items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+        {product.imageUrl ? (
+          <Image src={product.imageUrl} alt={product.name} fill className="object-cover" />
+        ) : (
+          <Package className="size-6" />
+        )}
       </div>
 
       {/* Product info */}

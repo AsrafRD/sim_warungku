@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { Plus, Package } from "lucide-react";
+import {
+  Plus,
+  Package,
+  ChevronRight,
+} from "lucide-react";
+
 import { AdminHeader } from "@/components/modules/admin/admin-header";
 import { ProductCard } from "@/components/modules/product/product-card";
 import { ProductSearch } from "@/components/modules/product/product-search";
@@ -7,7 +12,10 @@ import { getProducts } from "@/actions/product.actions";
 
 interface ProductsPageProps {
   params: Promise<{ storeId: string }>;
-  searchParams: Promise<{ search?: string; page?: string }>;
+  searchParams: Promise<{
+    search?: string;
+    page?: string;
+  }>;
 }
 
 export default async function ProductsPage({
@@ -27,7 +35,7 @@ export default async function ProductsPage({
   const total = result.data?.total ?? 0;
 
   // Serialize Decimal to number for Client Components
-  const products = rawProducts.map(p => ({
+  const products = rawProducts.map((p) => ({
     ...p,
     buyPrice: Number(p.buyPrice),
     sellPrice: Number(p.sellPrice),
@@ -37,23 +45,57 @@ export default async function ProductsPage({
     <>
       <AdminHeader title="Manajemen Produk" />
 
-      <div className="flex-1 bg-white flex flex-col">
-        {/* Search bar */}
-        <div className="p-3 border-b border-slate-100 sticky top-0 bg-white z-10">
-          <ProductSearch placeholder="Cari nama, SKU, barcode..." />
+      <div className="flex flex-1 flex-col overflow-hidden bg-[#F5F5DC]/40">
+
+        {/* =====================================================
+            SEARCH
+        ===================================================== */}
+
+        <div className="sticky top-0 z-10 border-b border-[#E8DFB5] bg-white/95 p-3 backdrop-blur">
+          <ProductSearch
+            placeholder="Cari nama, SKU, barcode..."
+          />
         </div>
 
-        {/* Product count */}
-        <div className="px-4 py-2 bg-slate-50 border-b border-slate-100">
-          <p className="text-xs text-slate-500 font-medium">
-            {total} produk ditemukan
-          </p>
+
+        {/* =====================================================
+            PRODUCT SUMMARY
+        ===================================================== */}
+
+        <div className="flex items-center justify-between border-b border-[#E8DFB5] bg-[#F5F5DC]/60 px-4 py-2.5">
+
+          <div className="flex items-center gap-2">
+
+            <div className="flex size-6 items-center justify-center rounded-md bg-[#FFF0D6] text-[#FF8F00]">
+              <Package className="size-3.5" />
+            </div>
+
+            <p className="text-xs font-semibold text-slate-600">
+              {total} produk ditemukan
+            </p>
+
+          </div>
+
+          {search && (
+            <div className="flex items-center gap-1 text-[10px] font-medium text-slate-400">
+              Hasil pencarian
+              <ChevronRight className="size-3" />
+            </div>
+          )}
+
         </div>
 
-        {/* Product list */}
-        <div className="flex-1 pb-20">
+
+        {/* =====================================================
+            PRODUCT LIST
+        ===================================================== */}
+
+        <div className="flex-1 overflow-y-auto pb-24">
+
           {products.length > 0 ? (
-            <div className="flex flex-col">
+
+            <div className="divide-y divide-[#E8DFB5] bg-white">
+
               {products.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -61,29 +103,82 @@ export default async function ProductsPage({
                   storeId={storeId}
                 />
               ))}
+
             </div>
+
           ) : (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 mb-4">
-                <Package className="size-8 text-slate-400" />
+
+            /* =================================================
+               EMPTY STATE
+            ================================================= */
+
+            <div className="flex min-h-[420px] flex-col items-center justify-center px-6 text-center">
+
+              <div className="mb-5 flex size-20 items-center justify-center rounded-[28px] bg-[#F5F5DC] text-[#FF8F00] shadow-sm ring-1 ring-[#E8DFB5]">
+
+                <Package className="size-9" />
+
               </div>
-              <h3 className="text-sm font-semibold text-slate-700">
-                {search ? "Produk tidak ditemukan" : "Belum ada produk"}
-              </h3>
-              <p className="text-xs text-slate-500 mt-1 max-w-[200px]">
+
+              <h3 className="text-base font-bold text-slate-800">
+
                 {search
-                  ? "Coba ubah kata kunci pencarian"
-                  : "Tambahkan produk pertama untuk mulai berjualan"}
+                  ? "Produk tidak ditemukan"
+                  : "Belum ada produk"}
+
+              </h3>
+
+              <p className="mt-1.5 max-w-[260px] text-xs leading-relaxed text-slate-500">
+
+                {search
+                  ? "Coba gunakan kata kunci lain atau periksa kembali nama produk, SKU, atau barcode."
+                  : "Tambahkan produk pertama untuk mulai mengelola stok dan penjualan toko Anda."}
+
               </p>
+
+              {!search && (
+                <Link
+                  href={`/${storeId}/products/new`}
+                  className="mt-5 inline-flex h-10 items-center gap-2 rounded-xl bg-[#FF8F00] px-4 text-sm font-bold text-white shadow-md shadow-orange-500/20 transition-all hover:bg-[#E98200] active:scale-95"
+                >
+                  <Plus className="size-4" />
+                  Tambah Produk
+                </Link>
+              )}
+
             </div>
+
           )}
+
         </div>
+
       </div>
 
-      {/* FAB - Add Product */}
+
+      {/* =====================================================
+          FAB
+      ===================================================== */}
+
       <Link
         href={`/${storeId}/products/new`}
-        className="fixed bottom-20 lg:bottom-8 right-4 lg:right-8 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-white shadow-lg transition-transform active:scale-95"
+        aria-label="Tambah produk"
+        className="
+          fixed
+          bottom-20 right-4
+          z-50
+          flex size-14
+          items-center justify-center
+          rounded-full
+          bg-[#FF8F00]
+          text-white
+          shadow-[0_8px_25px_rgba(255,143,0,0.35)]
+          transition-all
+          hover:bg-[#E98200]
+          hover:shadow-[0_10px_30px_rgba(255,143,0,0.4)]
+          active:scale-90
+          lg:bottom-8
+          lg:right-8
+        "
       >
         <Plus className="size-6" />
       </Link>
