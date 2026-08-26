@@ -6,7 +6,6 @@ import { Store, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createStoreAction } from "@/actions/store.actions";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -22,15 +21,27 @@ export default function OnboardingPage() {
     setFieldErrors({});
 
     startTransition(async () => {
-      const result = await createStoreAction({ name, address });
-      
-      if (result.success && result.data) {
-        router.push(`/${result.data.slug}/products`);
-        router.refresh();
-      } else if (result.errors) {
-        setFieldErrors(result.errors);
-      } else {
-        setError(result.message || "Gagal membuat toko");
+      try {
+        const response = await fetch("/api/stores", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, address }),
+        });
+        
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          router.push(`/${result.data.slug}/products`);
+          router.refresh();
+        } else if (result.errors) {
+          setFieldErrors(result.errors);
+        } else {
+          setError(result.message || "Gagal membuat toko");
+        }
+      } catch (err) {
+        setError("Terjadi kesalahan jaringan");
       }
     });
   };

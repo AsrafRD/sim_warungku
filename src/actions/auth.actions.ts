@@ -60,7 +60,7 @@ const loginSchema = z.object({
 
 export async function loginAction(
   data: z.infer<typeof loginSchema>
-): Promise<ActionResponse> {
+): Promise<ActionResponse & { redirectUrl?: string }> {
   try {
     const parsed = loginSchema.safeParse(data);
     if (!parsed.success) {
@@ -81,14 +81,26 @@ export async function loginAction(
       return { success: false, message: "Email atau password salah" };
     }
 
-    return { success: true, message: "Login berhasil" };
+    // Determine redirect URL
+    const user = await db.user.findUnique({
+      where: { email: parsed.data.email },
+      include: { ownedStores: { select: { slug: true } } },
+    });
+
+    let redirectUrl = "/onboarding";
+    if (user) {
+      if (user.ownedStores.length === 1) {
+        redirectUrl = `/${user.ownedStores[0].slug}/products`;
+      } else if (user.ownedStores.length > 1) {
+        redirectUrl = "/stores";
+      }
+    }
+
+    return { success: true, message: "Login berhasil", redirectUrl };
   } catch (error: any) {
-    // NextAuth throws AuthError for specific login errors
     if (error?.type === "CredentialsSignin") {
       return { success: false, message: "Email atau password salah" };
     }
-    // But it also throws a special redirect error that MUST be caught differently if redirecting, 
-    // since we set redirect: false, this won't be thrown from NextAuth, but we must be careful.
     if (error?.message?.includes("NEXT_REDIRECT")) {
       throw error;
     }

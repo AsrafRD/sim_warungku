@@ -15,7 +15,6 @@ interface AdminHeaderProps {
   className?: string;
 }
 
-import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 export function AdminHeader({
@@ -58,13 +57,6 @@ export function AdminHeader({
               aria-label="Notifikasi"
             >
               <Bell className="size-5" />
-            </button>
-            <button
-              onClick={handleLogout}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-red-400 transition-colors active:bg-white/10"
-              aria-label="Keluar"
-            >
-              <LogOut className="size-5" />
             </button>
           </>
         )}

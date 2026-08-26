@@ -27,7 +27,7 @@ export default function LoginPage() {
       
       if (result.success) {
         // Force refresh to update server components with new session
-        router.push("/");
+        router.push(result.redirectUrl || "/");
         router.refresh();
       } else if (result.errors) {
         setFieldErrors(result.errors);

@@ -3,7 +3,8 @@ import { db } from "@/lib/prisma";
 import { validateStoreAccess } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { formatRupiah } from "@/lib/format";
-import { AlertCircle, TrendingUp, Package, ShoppingBag, BarChart3, Trophy } from "lucide-react";
+import { AlertCircle, TrendingUp, Package, ShoppingBag, BarChart3, Trophy, Activity } from "lucide-react";
+import { DashboardChart } from "@/components/modules/admin/dashboard-chart";
 
 interface DashboardPageProps {
   params: Promise<{ storeId: string }>;
@@ -19,9 +20,11 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const now = new Date();
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  
+  const sevenDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
 
   // Fetch Dashboard Stats
-  const [todayOrders, monthOrders, lowStockProducts, topItemsGroup] = await Promise.all([
+  const [todayOrders, monthOrders, lowStockProducts, topItemsGroup, last7DaysOrders] = await Promise.all([
     db.order.findMany({
       where: { storeId: storeDbId, createdAt: { gte: startOfDay } },
       select: { totalAmount: true }
@@ -44,6 +47,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
       where: { order: { storeId: storeDbId } },
       orderBy: { _sum: { quantity: 'desc' } },
       take: 5
+    }),
+    db.order.findMany({
+      where: { storeId: storeDbId, createdAt: { gte: sevenDaysAgo } },
+      select: { totalAmount: true, createdAt: true }
     })
   ]);
 
@@ -62,15 +69,35 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     return {
       id: item.productId,
       name: p?.name || "Produk dihapus",
-      unit: p?.unit || "PCS",
+      unit: p?.unit?.name || "PCS",
       quantity: item._sum.quantity || 0,
       revenue: Number(item._sum.subtotal || 0)
     };
   });
 
+  // Prepare Chart Data
+  const chartMap = new Map<string, number>();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(sevenDaysAgo.getFullYear(), sevenDaysAgo.getMonth(), sevenDaysAgo.getDate() + i);
+    const dateStr = d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' });
+    chartMap.set(dateStr, 0);
+  }
+
+  last7DaysOrders.forEach(order => {
+    const dateStr = order.createdAt.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' });
+    if (chartMap.has(dateStr)) {
+      chartMap.set(dateStr, chartMap.get(dateStr)! + Number(order.totalAmount));
+    }
+  });
+
+  const chartData = Array.from(chartMap.entries()).map(([date, revenue]) => ({
+    date,
+    revenue
+  }));
+
   return (
     <>
-      <AdminHeader title="Warung Dashboard" />
+      {/* <AdminHeader title="Warung Dashboard" /> */}
 
       <div className="flex-1 p-4 space-y-4 pb-24 bg-slate-50 overflow-y-auto">
         
@@ -105,6 +132,17 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               <p className="text-[10px] text-slate-400 font-medium">Hari ini</p>
             </div>
           </div>
+        </div>
+
+        {/* Weekly Chart */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="bg-indigo-100 p-1.5 rounded-lg text-indigo-600">
+              <Activity className="size-4" />
+            </div>
+            <h3 className="font-bold text-slate-800">Omset 7 Hari Terakhir</h3>
+          </div>
+          <DashboardChart data={chartData} />
         </div>
 
         {/* Monthly Summary */}

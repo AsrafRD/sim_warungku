@@ -54,6 +54,28 @@ export default async function ProfilePage({
           </div>
         </div>
 
+        <div className="px-6 py-4 border-b border-slate-100">
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Pengaturan Toko</h3>
+          <div className="space-y-2">
+            <a href={`/${storeId}/profile/categories`} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+              <span className="font-semibold text-slate-700">Kategori Produk</span>
+              <span className="text-slate-400">→</span>
+            </a>
+            <a href={`/${storeId}/profile/units`} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+              <span className="font-semibold text-slate-700">Satuan (Unit) Produk</span>
+              <span className="text-slate-400">→</span>
+            </a>
+            <a href="/stores" className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+              <span className="font-semibold text-slate-700">Ganti Toko (Switch Store)</span>
+              <span className="text-slate-400">→</span>
+            </a>
+            <a href="/onboarding" className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+              <span className="font-semibold text-indigo-600">Buka Cabang Baru</span>
+              <span className="text-indigo-400">+</span>
+            </a>
+          </div>
+        </div>
+
         <div className="px-6 py-6">
           <form action={async () => {
             "use server";

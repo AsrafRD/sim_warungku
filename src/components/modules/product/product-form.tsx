@@ -13,7 +13,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { createProduct, updateProduct } from "@/actions/product.actions";
+import { createCategory, createUnit } from "@/actions/settings.actions";
 import {
   createProductSchema,
   updateProductSchema,
@@ -72,6 +80,44 @@ export function ProductForm({
   const [supplierId, setSupplierId] = useState(product?.supplierId ?? "");
   const [errors, setErrors] = useState<FormErrors>({});
   const [globalError, setGlobalError] = useState("");
+
+  // Modal states for Quick Add
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
+  const [newUnitName, setNewUnitName] = useState("");
+
+  const handleQuickAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    
+    startTransition(async () => {
+      const result = await createCategory(storeId, newCategoryName);
+      if (result.success) {
+        setIsCategoryModalOpen(false);
+        setNewCategoryName("");
+        router.refresh();
+      } else {
+        setGlobalError(result.message || "Gagal menambah kategori");
+      }
+    });
+  };
+
+  const handleQuickAddUnit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUnitName.trim()) return;
+
+    startTransition(async () => {
+      const result = await createUnit(storeId, newUnitName);
+      if (result.success) {
+        setIsUnitModalOpen(false);
+        setNewUnitName("");
+        router.refresh();
+      } else {
+        setGlobalError(result.message || "Gagal menambah satuan");
+      }
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,12 +200,23 @@ export function ProductForm({
       </div>
 
       {/* Category */}
-      {categories.length > 0 ? (
-        <div className="space-y-1.5">
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
           <Label>Kategori</Label>
+          <button 
+            type="button" 
+            onClick={() => setIsCategoryModalOpen(true)} 
+            className="text-xs text-indigo-600 font-bold hover:underline"
+          >
+            + Kategori Baru
+          </button>
+        </div>
+        {categories.length > 0 ? (
           <Select value={categoryId} onValueChange={(v) => setCategoryId(v ?? "")}>
             <SelectTrigger className="h-11 w-full rounded-xl">
-              <SelectValue placeholder="Pilih kategori" />
+              <SelectValue placeholder="Pilih kategori">
+                {categories.find(c => c.id === categoryId)?.name}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {categories.map((cat) => (
@@ -169,14 +226,48 @@ export function ProductForm({
               ))}
             </SelectContent>
           </Select>
-          <FieldError errors={errors} field="categoryId" />
+        ) : (
+          <div className="h-11 rounded-xl border border-dashed border-slate-300 flex items-center justify-center text-sm text-slate-500 bg-slate-50">
+            Belum ada kategori
+          </div>
+        )}
+        <FieldError errors={errors} field="categoryId" />
+      </div>
+
+      {/* Unit select */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <Label>Satuan (Unit)</Label>
+          <button 
+            type="button" 
+            onClick={() => setIsUnitModalOpen(true)} 
+            className="text-xs text-indigo-600 font-bold hover:underline"
+          >
+            + Satuan Baru
+          </button>
         </div>
-      ) : (
-        <div className="space-y-1.5">
-          <Label htmlFor="category">Kategori</Label>
-          <p className="text-sm text-slate-500">Belum ada kategori. Tambahkan di menu pengaturan/kategori.</p>
-        </div>
-      )}
+        {units.length > 0 ? (
+          <Select value={unitId} onValueChange={(v) => setUnitId(v ?? "")}>
+            <SelectTrigger className="h-11 w-full rounded-xl">
+              <SelectValue placeholder="Pilih satuan">
+                {units.find(u => u.id === unitId)?.name}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {units.map((u) => (
+                <SelectItem key={u.id} value={u.id}>
+                  {u.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <div className="h-11 rounded-xl border border-dashed border-slate-300 flex items-center justify-center text-sm text-slate-500 bg-slate-50">
+            Belum ada satuan
+          </div>
+        )}
+        <FieldError errors={errors} field="unitId" />
+      </div>
 
       {/* SKU & Barcode side by side */}
       <div className="grid grid-cols-2 gap-3">
@@ -233,26 +324,6 @@ export function ProductForm({
           <FieldError errors={errors} field="sellPrice" />
         </div>
       </div>
-
-      {/* Unit select */}
-      {units.length > 0 && (
-        <div className="space-y-1.5">
-          <Label>Satuan (Unit)</Label>
-          <Select value={unitId} onValueChange={(v) => setUnitId(v ?? "")}>
-            <SelectTrigger className="h-11 w-full rounded-xl">
-              <SelectValue placeholder="Pilih satuan" />
-            </SelectTrigger>
-            <SelectContent>
-              {units.map((u) => (
-                <SelectItem key={u.id} value={u.id}>
-                  {u.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FieldError errors={errors} field="unitId" />
-        </div>
-      )}
 
       {/* Stock (only on create) & Min Stock Warning */}
       <div className="grid grid-cols-2 gap-3">
@@ -325,6 +396,84 @@ export function ProductForm({
           )}
         </Button>
       </div>
+
+      {/* Quick Add Category Modal */}
+      <Dialog open={isCategoryModalOpen} onOpenChange={setIsCategoryModalOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Tambah Kategori Baru</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="newCategoryName" className="mb-2 block">Nama Kategori</Label>
+            <Input
+              id="newCategoryName"
+              placeholder="Contoh: Makanan Ringan"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="h-11 rounded-xl"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCategoryModalOpen(false)}
+              className="rounded-xl h-10"
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              onClick={handleQuickAddCategory}
+              disabled={isPending || !newCategoryName.trim()}
+              className="rounded-xl h-10 bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              {isPending ? <Loader2 className="size-4 animate-spin mr-2" /> : null}
+              Simpan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Add Unit Modal */}
+      <Dialog open={isUnitModalOpen} onOpenChange={setIsUnitModalOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Tambah Satuan Baru</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="newUnitName" className="mb-2 block">Nama Satuan</Label>
+            <Input
+              id="newUnitName"
+              placeholder="Contoh: PCS, KG, DUS"
+              value={newUnitName}
+              onChange={(e) => setNewUnitName(e.target.value)}
+              className="h-11 rounded-xl uppercase"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsUnitModalOpen(false)}
+              className="rounded-xl h-10"
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              onClick={handleQuickAddUnit}
+              disabled={isPending || !newUnitName.trim()}
+              className="rounded-xl h-10 bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              {isPending ? <Loader2 className="size-4 animate-spin mr-2" /> : null}
+              Simpan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </form>
   );
 }

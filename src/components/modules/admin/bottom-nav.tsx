@@ -48,13 +48,13 @@ export function BottomNav() {
               className="relative flex flex-col items-center w-14 h-full justify-end pb-1.5 group"
             >
               <div
-                className={cn(
+              className={cn(
                   "absolute flex items-center justify-center transition-all duration-300 z-10",
-                  isActive
+                isActive 
                     ? "-top-4 h-12 w-12 rounded-full bg-slate-900 text-white shadow-md shadow-slate-900/20"
                     : "top-2 h-6 w-6 text-slate-400 bg-transparent group-hover:text-slate-600"
-                )}
-              >
+              )}
+            >
                 <item.icon className="size-5 transition-transform duration-300" />
               </div>
               <span
