@@ -64,12 +64,23 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     select: { id: true, name: true, unit: true }
   });
   
-  const topProducts = topItemsGroup.map(item => {
+  const topProducts: { id: string; name: string; unit: string; quantity: number; revenue: number }[] = topItemsGroup.map(item => {
     const p = topProductsData.find(prod => prod.id === item.productId);
+    
+    // Type-safe extraction of unit name
+    let unitStr = "PCS";
+    if (p?.unit) {
+      if (typeof p.unit === "object" && "name" in p.unit) {
+        unitStr = p.unit.name as string;
+      } else if (typeof p.unit === "string") {
+        unitStr = p.unit;
+      }
+    }
+
     return {
       id: item.productId,
       name: p?.name || "Produk dihapus",
-      unit: p?.unit?.name || "PCS",
+      unit: unitStr,
       quantity: item._sum.quantity || 0,
       revenue: Number(item._sum.subtotal || 0)
     };
