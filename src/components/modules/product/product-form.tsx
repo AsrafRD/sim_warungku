@@ -20,7 +20,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { createProduct, updateProduct } from "@/actions/product.actions";
 import { createCategory, createUnit } from "@/actions/settings.actions";
 import {
   createProductSchema,
@@ -152,28 +151,30 @@ export function ProductForm({
     }
 
     startTransition(async () => {
-      const result = isEditing
-        ? await updateProduct(storeId, {
-          id: product!.id,
-            name: formData.name,
-            categoryId: formData.categoryId,
-            sku: formData.sku,
-            barcode: formData.barcode,
-            unitId: formData.unitId,
-            buyPrice: formData.buyPrice,
-            sellPrice: formData.sellPrice,
-            minStockWarning: formData.minStockWarning,
-            supplierId: formData.supplierId,
-          })
-        : await createProduct(storeId, formData);
+      try {
+        const url = isEditing 
+          ? `/api/products/${product.id}?storeId=${storeId}` 
+          : `/api/products?storeId=${storeId}`;
+        const method = isEditing ? "PUT" : "POST";
+        
+        const response = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dataToValidate)
+        });
 
-      if (result.success) {
-        router.push(`/${storeId}/products`);
-        router.refresh();
-      } else if (result.errors) {
-        setErrors(result.errors);
-      } else {
-        setGlobalError(result.message ?? "Terjadi kesalahan");
+        const result = await response.json();
+
+        if (result.success) {
+          router.push(`/${storeId}/products`);
+          router.refresh();
+        } else if (result.errors) {
+          setErrors(result.errors);
+        } else {
+          setGlobalError(result.message ?? "Terjadi kesalahan");
+        }
+      } catch (err) {
+        setGlobalError("Terjadi kesalahan jaringan");
       }
     });
   };
