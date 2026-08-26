@@ -155,13 +155,17 @@ export async function createProduct(
       // Create the product
       const newProduct = await tx.product.create({
         data: {
-          ...data,
           storeId: storeDbId,
-          unit: data.unit || "PCS",
-          currentStock,
           supplierId: supplierId || null,
+          name: data.name,
+          categoryId: data.categoryId || null,
           sku: data.sku || null,
           barcode: data.barcode || null,
+          unitId: data.unitId || null,
+          buyPrice: data.buyPrice,
+          sellPrice: data.sellPrice,
+          currentStock: currentStock,
+          minStockWarning: data.minStockWarning,
         },
       });
 
@@ -235,7 +239,8 @@ export async function updateProduct(
       where: { id },
       data: {
         ...data,
-        unit: data.unit || "PCS",
+        categoryId: data.categoryId || null,
+        unitId: data.unitId || null,
         supplierId: supplierId || null,
         sku: data.sku || null,
         barcode: data.barcode || null,
@@ -319,5 +324,51 @@ export async function getSuppliers(
   } catch (error) {
     console.error("[getSuppliers]", error);
     return { success: false, message: "Gagal memuat daftar supplier" };
+  }
+}
+
+// ──────────────────────────────────────────────
+// GET CATEGORIES
+// ──────────────────────────────────────────────
+
+export async function getCategories(
+  storeId: string
+): Promise<ActionResponse<{ id: string; name: string }[]>> {
+  try {
+    const storeDbId = await validateStoreAccess(storeId);
+    if (!storeDbId) return { success: false, message: "Akses ditolak" };
+
+    const categories = await db.category.findMany({
+      where: { storeId: storeDbId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    });
+    return { success: true, data: categories };
+  } catch (error) {
+    console.error("[getCategories]", error);
+    return { success: false, message: "Gagal memuat kategori" };
+  }
+}
+
+// ──────────────────────────────────────────────
+// GET UNITS
+// ──────────────────────────────────────────────
+
+export async function getUnits(
+  storeId: string
+): Promise<ActionResponse<{ id: string; name: string }[]>> {
+  try {
+    const storeDbId = await validateStoreAccess(storeId);
+    if (!storeDbId) return { success: false, message: "Akses ditolak" };
+
+    const units = await db.unit.findMany({
+      where: { storeId: storeDbId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    });
+    return { success: true, data: units };
+  } catch (error) {
+    console.error("[getUnits]", error);
+    return { success: false, message: "Gagal memuat satuan" };
   }
 }

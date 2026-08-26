@@ -10,14 +10,16 @@ import { formatRupiah } from "@/lib/format";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import type { Product } from "@/generated/prisma/client";
+import type { Product, Unit } from "@/generated/prisma/client";
+
+type PosProduct = Product & { unit: { name: string } | null };
 
 export function PosClient({ 
   storeId, 
   products 
 }: { 
   storeId: string; 
-  products: Product[];
+  products: PosProduct[];
 }) {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -80,7 +82,7 @@ export function PosClient({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-full overflow-hidden relative mb-5">
+    <div className="flex flex-col lg:flex-row h-full overflow-hidden relative">
       {/* LEFT PANEL: PRODUCT CATALOG */}
       <div className="flex-1 flex flex-col bg-slate-50 lg:border-r border-slate-200 overflow-y-auto pb-24 lg:pb-0">
         <div className="p-3 lg:p-4 bg-white border-b border-slate-200 sticky top-0 z-10 lg:static">
@@ -116,7 +118,7 @@ export function PosClient({
                 <div className="mt-2 flex items-end justify-between w-full">
                   <span className="font-bold text-indigo-600 text-xs lg:text-sm">
                     {formatRupiah(Number(product.sellPrice))}
-                    <span className="text-[9px] lg:text-[10px] text-slate-400 font-normal ml-0.5">/ {product.unit || "PCS"}</span>
+                    <span className="text-[9px] lg:text-[10px] text-slate-400 font-normal ml-0.5">/ {product.unit?.name || "PCS"}</span>
                   </span>
                   <span className={`text-[10px] lg:text-xs px-1.5 py-0.5 rounded-md font-medium ${
                     product.currentStock <= product.minStockWarning 
@@ -194,7 +196,7 @@ export function PosClient({
                   <div className="flex-1">
                     <h4 className="font-semibold text-sm text-slate-800 line-clamp-1">{item.product.name}</h4>
                     <p className="text-xs font-medium text-slate-500 mt-0.5">
-                      {formatRupiah(Number(item.product.sellPrice))} <span className="text-[10px] text-slate-400">/ {item.product.unit || "PCS"}</span>
+                      {formatRupiah(Number(item.product.sellPrice))} <span className="text-[10px] text-slate-400">/ {item.product.unit?.name || "PCS"}</span>
                     </p>
                   </div>
                   <button 

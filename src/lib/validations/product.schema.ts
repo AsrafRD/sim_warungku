@@ -19,7 +19,8 @@ export const createProductSchema = z.object({
     .max(50, "Barcode maksimal 50 karakter")
     .optional()
     .or(z.literal("")),
-  unit: z.string().min(1, "Satuan wajib diisi").default("PCS"),
+  unitId: z.string().optional().or(z.literal("")),
+  categoryId: z.string().optional().or(z.literal("")),
   buyPrice: z
     .number({ error: "Harga beli harus berupa angka" })
     .min(0, "Harga beli tidak boleh negatif"),
@@ -64,7 +65,8 @@ export const updateProductSchema = z.object({
     .max(50, "Barcode maksimal 50 karakter")
     .optional()
     .or(z.literal("")),
-  unit: z.string().min(1, "Satuan wajib diisi").default("PCS"),
+  unitId: z.string().optional().or(z.literal("")),
+  categoryId: z.string().optional().or(z.literal("")),
   buyPrice: z
     .number({ error: "Harga beli harus berupa angka" })
     .min(0, "Harga beli tidak boleh negatif"),

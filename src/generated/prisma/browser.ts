@@ -62,3 +62,13 @@ export type StockOpnameItem = Prisma.StockOpnameItemModel
  * 
  */
 export type StockLog = Prisma.StockLogModel
+/**
+ * Model Category
+ * 
+ */
+export type Category = Prisma.CategoryModel
+/**
+ * Model Unit
+ * 
+ */
+export type Unit = Prisma.UnitModel

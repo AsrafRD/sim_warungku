@@ -72,6 +72,8 @@ model Store {
   orders       Order[]
   stockOpnames StockOpname[]
   stockLogs    StockLog[]
+  categories   Category[]
+  units        Unit[]
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -111,9 +113,12 @@ model Product {
   storeId         String
   supplierId      String?
   name            String
+  categoryId      String?
+  category        Category?         @relation(fields: [categoryId], references: [id])
   sku             String?
   barcode         String?
-  unit            String            @default("PCS")
+  unitId          String?
+  unit            Unit?             @relation(fields: [unitId], references: [id])
   buyPrice        Decimal           @db.Decimal(12, 2)
   sellPrice       Decimal           @db.Decimal(12, 2)
   currentStock    Int               @default(0)
@@ -209,6 +214,8 @@ model StockOpnameItem {
   @@index([productId])
 }
 
+
+
 model StockLog {
   id          String               @id @default(uuid())
   storeId     String
@@ -222,9 +229,34 @@ model StockLog {
 
   store       Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
   product     Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
-
   createdAt   DateTime             @default(now())
 
   @@index([storeId])
   @@index([productId])
+}
+
+// ------------------------------------------------------
+// USER & TENANT (STORE)
+// ------------------------------------------------------
+
+model Category {
+  id        String    @id @default(uuid())
+  storeId   String
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  store     Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+}
+
+model Unit {
+  id        String    @id @default(uuid())
+  storeId   String
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  store     Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }

@@ -30,6 +30,8 @@ interface ProductFormProps {
   product?: any; // Serialized Product from Server Component
   /** Available suppliers for dropdown */
   suppliers: { id: string; name: string }[];
+  categories: { id: string; name: string }[];
+  units: { id: string; name: string }[];
 }
 
 type FormErrors = Record<string, string[]>;
@@ -42,6 +44,8 @@ export function ProductForm({
   storeId,
   product,
   suppliers,
+  categories,
+  units,
 }: ProductFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -51,13 +55,14 @@ export function ProductForm({
   const [name, setName] = useState(product?.name ?? "");
   const [sku, setSku] = useState(product?.sku ?? "");
   const [barcode, setBarcode] = useState(product?.barcode ?? "");
+  const [categoryId, setCategoryId] = useState(product?.categoryId ?? "");
   const [buyPrice, setBuyPrice] = useState(
     product ? Number(product.buyPrice).toString() : ""
   );
   const [sellPrice, setSellPrice] = useState(
     product ? Number(product.sellPrice).toString() : ""
   );
-  const [unit, setUnit] = useState(product?.unit ?? "PCS");
+  const [unitId, setUnitId] = useState(product?.unitId ?? "");
   const [currentStock, setCurrentStock] = useState(
     product ? product.currentStock.toString() : ""
   );
@@ -75,9 +80,10 @@ export function ProductForm({
 
     const formData = {
       name: name.trim(),
+      categoryId: categoryId || "",
       sku: sku.trim(),
       barcode: barcode.trim(),
-      unit,
+      unitId: unitId || "",
       buyPrice: Number(buyPrice),
       sellPrice: Number(sellPrice),
       currentStock: Number(currentStock),
@@ -102,11 +108,12 @@ export function ProductForm({
     startTransition(async () => {
       const result = isEditing
         ? await updateProduct(storeId, {
-            id: product!.id,
+          id: product!.id,
             name: formData.name,
+            categoryId: formData.categoryId,
             sku: formData.sku,
             barcode: formData.barcode,
-            unit: formData.unit,
+            unitId: formData.unitId,
             buyPrice: formData.buyPrice,
             sellPrice: formData.sellPrice,
             minStockWarning: formData.minStockWarning,
@@ -145,6 +152,31 @@ export function ProductForm({
         />
         <FieldError errors={errors} field="name" />
       </div>
+
+      {/* Category */}
+      {categories.length > 0 ? (
+        <div className="space-y-1.5">
+          <Label>Kategori</Label>
+          <Select value={categoryId} onValueChange={(v) => setCategoryId(v ?? "")}>
+            <SelectTrigger className="h-11 w-full rounded-xl">
+              <SelectValue placeholder="Pilih kategori" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FieldError errors={errors} field="categoryId" />
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          <Label htmlFor="category">Kategori</Label>
+          <p className="text-sm text-slate-500">Belum ada kategori. Tambahkan di menu pengaturan/kategori.</p>
+        </div>
+      )}
 
       {/* SKU & Barcode side by side */}
       <div className="grid grid-cols-2 gap-3">
@@ -201,6 +233,26 @@ export function ProductForm({
           <FieldError errors={errors} field="sellPrice" />
         </div>
       </div>
+
+      {/* Unit select */}
+      {units.length > 0 && (
+        <div className="space-y-1.5">
+          <Label>Satuan (Unit)</Label>
+          <Select value={unitId} onValueChange={(v) => setUnitId(v ?? "")}>
+            <SelectTrigger className="h-11 w-full rounded-xl">
+              <SelectValue placeholder="Pilih satuan" />
+            </SelectTrigger>
+            <SelectContent>
+              {units.map((u) => (
+                <SelectItem key={u.id} value={u.id}>
+                  {u.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FieldError errors={errors} field="unitId" />
+        </div>
+      )}
 
       {/* Stock (only on create) & Min Stock Warning */}
       <div className="grid grid-cols-2 gap-3">
