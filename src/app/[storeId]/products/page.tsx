@@ -23,14 +23,21 @@ export default async function ProductsPage({
     limit: 20,
   });
 
-  const products = result.data?.products ?? [];
+  const rawProducts = result.data?.products ?? [];
   const total = result.data?.total ?? 0;
+
+  // Serialize Decimal to number for Client Components
+  const products = rawProducts.map(p => ({
+    ...p,
+    buyPrice: Number(p.buyPrice),
+    sellPrice: Number(p.sellPrice),
+  }));
 
   return (
     <>
       <AdminHeader title="Manajemen Produk" />
 
-      <div className="flex-1 p-4 space-y-3">
+      <div className="flex-1 p-2 space-y-3">
         {/* Search bar */}
         <ProductSearch placeholder="Cari nama, SKU, barcode..." />
 

@@ -26,9 +26,9 @@ export default async function ProfilePage({
   return (
     <>
       <AdminHeader title="Profil Saya" />
-      <div className="flex-1 p-4 bg-slate-50">
+      <div className="flex-1 p-2 bg-slate-50">
         
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-6">
+        <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 mb-6">
           <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
             <div className="size-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
               <UserIcon className="size-8" />

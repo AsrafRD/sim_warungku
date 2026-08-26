@@ -25,9 +25,9 @@ export default async function StoreLayout({
   }
 
   return (
-    <div className="max-w-md mx-auto min-h-screen relative shadow-xl overflow-hidden flex flex-col bg-slate-50">
-      {/* Main content area — grows to fill available space */}
-      <main className="flex-1 flex flex-col overflow-y-auto">
+    <div className="max-w-md mx-auto h-[100dvh] relative shadow-xl overflow-hidden flex flex-col bg-slate-50">
+      {/* Main content area — strictly bounded to screen minus BottomNav (72px) on mobile */}
+      <main className="h-[calc(100dvh-72px)] lg:h-[100dvh] flex flex-col overflow-y-auto w-full">
         {children}
       </main>
 

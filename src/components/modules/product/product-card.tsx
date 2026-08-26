@@ -7,9 +7,7 @@ import { formatRupiah } from "@/lib/format";
 import type { Product } from "@/generated/prisma/client";
 
 interface ProductCardProps {
-  product: Product & {
-    supplier: { id: string; name: string } | null;
-  };
+  product: any;
   storeId: string;
 }
 

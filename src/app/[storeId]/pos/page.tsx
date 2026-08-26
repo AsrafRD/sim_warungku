@@ -29,7 +29,7 @@ export default async function PosPage({
   }));
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-slate-50">
+    <div className="flex-1 flex flex-col h-full bg-slate-50 overflow-hidden">
       <div className="bg-slate-900 text-white px-4 h-14 flex items-center justify-between shrink-0 shadow-md relative z-10">
         <h1 className="font-bold text-lg tracking-tight">Mode Kasir (POS)</h1>
         <div className="flex items-center gap-2">
