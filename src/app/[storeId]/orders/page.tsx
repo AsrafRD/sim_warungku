@@ -94,7 +94,7 @@ export default async function OrdersPage({
               {orders.map((order) => (
                 <OrderCard
                   key={order.id}
-                  order={order}
+                  order={order as any}
                 />
               ))}
             </div>

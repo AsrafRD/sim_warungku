@@ -42,7 +42,7 @@ export default async function PosPage({
     <div className="flex h-full flex-1 flex-col overflow-hidden bg-[#F5F5DC]/40">
       <PosClient
         storeId={storeId}
-        products={products}
+        products={products as any}
       />
     </div>
   );
