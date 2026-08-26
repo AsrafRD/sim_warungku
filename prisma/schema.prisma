@@ -1,0 +1,230 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// ------------------------------------------------------
+// ENUMS
+// ------------------------------------------------------
+
+enum Role {
+  SUPERADMIN
+  OWNER
+  SUPPLIER
+}
+
+enum StockOpnameStatus {
+  DRAFT
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentType {
+  CASH
+  QRIS
+  TRANSFER
+}
+
+enum StockTransactionType {
+  IN                // Barang masuk dari Supplier
+  OUT_SALE          // Penjualan via POS
+  OPNAME_ADJUSTMENT // Penyesuaian selisih opname
+  DAMAGED           // Barang rusak / kadaluarsa
+  RETURN            // Pengembalian barang
+}
+
+// ------------------------------------------------------
+// USER & TENANT (STORE)
+// ------------------------------------------------------
+
+model User {
+  id               String        @id @default(uuid())
+  email            String        @unique
+  name             String
+  password         String
+  role             Role          @default(OWNER)
+  phone            String?
+  
+  supplierProfile  Supplier?
+  ownedStores      Store[]       @relation("StoreOwner")
+  performedOpnames StockOpname[]
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model Store {
+  id           String        @id @default(uuid())
+  name         String
+  slug         String        @unique
+  address      String?
+  phone        String?
+  
+  ownerId      String
+  owner        User          @relation("StoreOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  suppliers    Supplier[]
+  products     Product[]
+  orders       Order[]
+  stockOpnames StockOpname[]
+  stockLogs    StockLog[]
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([ownerId])
+}
+
+// ------------------------------------------------------
+// SUPPLIER
+// ------------------------------------------------------
+
+model Supplier {
+  id          String    @id @default(uuid())
+  storeId     String
+  userId      String?   @unique
+  name        String
+  contactName String?
+  phone       String?
+  address     String?
+  
+  store       Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  products    Product[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([storeId])
+}
+
+// ------------------------------------------------------
+// INVENTORY & PRODUCT
+// ------------------------------------------------------
+
+model Product {
+  id              String            @id @default(uuid())
+  storeId         String
+  supplierId      String?
+  name            String
+  sku             String?
+  barcode         String?
+  unit            String            @default("PCS")
+  buyPrice        Decimal           @db.Decimal(12, 2)
+  sellPrice       Decimal           @db.Decimal(12, 2)
+  currentStock    Int               @default(0)
+  minStockWarning Int               @default(5)
+
+  store           Store             @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  supplier        Supplier?         @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  
+  orderItems      OrderItem[]
+  opnameItems     StockOpnameItem[]
+  stockLogs       StockLog[]
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([storeId])
+  @@index([supplierId])
+  @@index([barcode])
+}
+
+// ------------------------------------------------------
+// POS / TRANSAKSI PENJUALAN
+// ------------------------------------------------------
+
+model Order {
+  id           String      @id @default(uuid())
+  storeId      String
+  invoiceNo    String      @unique
+  totalAmount  Decimal     @db.Decimal(12, 2)
+  paidAmount   Decimal     @db.Decimal(12, 2)
+  changeAmount Decimal     @db.Decimal(12, 2) @default(0)
+  paymentType  PaymentType @default(CASH)
+  
+  store        Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  items        OrderItem[]
+
+  createdAt    DateTime    @default(now())
+
+  @@index([storeId])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  buyPrice  Decimal  @db.Decimal(12, 2)
+  sellPrice Decimal  @db.Decimal(12, 2)
+  subtotal  Decimal  @db.Decimal(12, 2)
+
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// ------------------------------------------------------
+// STOK OPNAME & JURNAL MUTASI STOK
+// ------------------------------------------------------
+
+model StockOpname {
+  id          String            @id @default(uuid())
+  storeId     String
+  performedBy String
+  notes       String?
+  status      StockOpnameStatus @default(DRAFT)
+  
+  store       Store             @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  executor    User              @relation(fields: [performedBy], references: [id])
+  items       StockOpnameItem[]
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([storeId])
+}
+
+model StockOpnameItem {
+  id            String      @id @default(uuid())
+  stockOpnameId String
+  productId     String
+  systemStock   Int
+  actualStock   Int
+  difference    Int
+  notes         String?
+
+  stockOpname   StockOpname @relation(fields: [stockOpnameId], references: [id], onDelete: Cascade)
+  product       Product     @relation(fields: [productId], references: [id])
+
+  @@index([stockOpnameId])
+  @@index([productId])
+}
+
+model StockLog {
+  id          String               @id @default(uuid())
+  storeId     String
+  productId   String
+  type        StockTransactionType
+  quantity    Int
+  stockBefore Int
+  stockAfter  Int
+  referenceId String?
+  notes       String?
+
+  store       Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  product     Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime             @default(now())
+
+  @@index([storeId])
+  @@index([productId])
+}
