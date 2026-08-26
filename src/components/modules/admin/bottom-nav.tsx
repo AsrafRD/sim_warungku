@@ -115,8 +115,7 @@ export function BottomNav() {
                       top-1.5
                       size-8
                       rounded-xl
-                      bg-[#FFF0D6]
-                      text-[#FF8F00]
+                      text-slate-400
                       group-hover:bg-[#FFE4BD]
                     `
                     : `
