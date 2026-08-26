@@ -93,6 +93,8 @@ export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 export const productFilterSchema = z.object({
   search: z.string().optional(),
   supplierId: z.string().optional(),
+  categoryId: z.string().optional(),
+  unitId: z.string().optional(),
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(20),
   sortBy: z
