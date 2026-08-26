@@ -17,7 +17,7 @@ export default async function OrdersPage({
   const storeDbId = await validateStoreAccess(storeId);
   if (!storeDbId) redirect("/");
 
-  const orders = await db.order.findMany({
+  const rawOrders = await db.order.findMany({
     where: { storeId: storeDbId },
     orderBy: { createdAt: "desc" },
     include: {
@@ -27,6 +27,19 @@ export default async function OrdersPage({
     },
     take: 50 // recent 50 orders
   });
+
+  const orders = rawOrders.map(order => ({
+    ...order,
+    totalAmount: Number(order.totalAmount),
+    paidAmount: Number(order.paidAmount),
+    changeAmount: Number(order.changeAmount),
+    items: order.items.map(item => ({
+      ...item,
+      buyPrice: Number(item.buyPrice),
+      sellPrice: Number(item.sellPrice),
+      subtotal: Number(item.subtotal),
+    }))
+  }));
 
   return (
     <>

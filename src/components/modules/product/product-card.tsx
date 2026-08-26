@@ -16,12 +16,11 @@ export function ProductCard({ product, storeId }: ProductCardProps) {
 
   return (
     <Link
-      href={`/${storeId}/products/${product.id}`}
-      className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm border border-slate-100 transition-colors active:bg-slate-50"
+      href={`/${storeId}/products/${product.id}/edit`}
+      className="flex items-center gap-4 bg-white px-4 py-3 border-b border-slate-100 active:bg-slate-50 transition-colors"
     >
-      {/* Product thumbnail placeholder */}
-      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-slate-100">
-        <Package className="size-6 text-slate-400" />
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+        <Package className="size-6" />
       </div>
 
       {/* Product info */}

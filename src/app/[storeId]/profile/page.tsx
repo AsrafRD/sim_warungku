@@ -26,35 +26,35 @@ export default async function ProfilePage({
   return (
     <>
       <AdminHeader title="Profil Saya" />
-      <div className="flex-1 p-2 bg-slate-50">
+      <div className="flex-1 bg-white">
         
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 mb-6">
-          <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
-            <div className="size-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-              <UserIcon className="size-8" />
-            </div>
-            <div>
-              <h2 className="font-bold text-xl text-slate-800">{user?.name}</h2>
-              <p className="text-slate-500 text-sm">{user?.email}</p>
-              <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md">
-                {user?.role}
-              </span>
-            </div>
+        <div className="flex items-center gap-4 px-6 py-8 border-b border-slate-100">
+          <div className="size-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+            <UserIcon className="size-8" />
           </div>
-
-          <div className="flex items-center gap-4 mb-6">
-            <div className="size-12 rounded-2xl bg-fuchsia-100 flex items-center justify-center text-fuchsia-600">
-              <Store className="size-6" />
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase">Toko Aktif</p>
-              <h3 className="font-bold text-slate-800">{store?.name}</h3>
-              <p className="text-xs text-slate-500 mt-0.5 max-w-[200px] truncate">
-                {store?.address || "Belum ada alamat"}
-              </p>
-            </div>
+          <div>
+            <h2 className="font-bold text-xl text-slate-800">{user?.name}</h2>
+            <p className="text-slate-500 text-sm">{user?.email}</p>
+            <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md">
+              {user?.role}
+            </span>
           </div>
+        </div>
 
+        <div className="flex items-center gap-4 px-6 py-6 border-b border-slate-100">
+          <div className="size-12 rounded-2xl bg-fuchsia-100 flex items-center justify-center text-fuchsia-600 shrink-0">
+            <Store className="size-6" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase">Toko Aktif</p>
+            <h3 className="font-bold text-slate-800">{store?.name}</h3>
+            <p className="text-xs text-slate-500 mt-0.5 max-w-[200px] truncate">
+              {store?.address || "Belum ada alamat"}
+            </p>
+          </div>
+        </div>
+
+        <div className="px-6 py-6">
           <form action={async () => {
             "use server";
             await signOut({ redirectTo: "/login" });
@@ -62,7 +62,7 @@ export default async function ProfilePage({
             <Button 
               type="submit" 
               variant="destructive" 
-              className="w-full h-12 rounded-xl font-bold gap-2 text-base"
+              className="w-full h-12 rounded-xl font-bold gap-2 text-base shadow-sm"
             >
               <LogOut className="size-5" />
               Keluar Akun
