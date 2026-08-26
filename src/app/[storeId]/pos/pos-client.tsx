@@ -26,7 +26,9 @@ import { Label } from "@/components/ui/label";
 
 import type { Product } from "@/generated/prisma/client";
 
-type PosProduct = Product & {
+type PosProduct = Omit<Product, "buyPrice" | "sellPrice"> & {
+  buyPrice: number | any;
+  sellPrice: number | any;
   unit: {
     name: string;
   } | null;

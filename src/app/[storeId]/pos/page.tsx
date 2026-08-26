@@ -40,7 +40,6 @@ export default async function PosPage({
 
   return (
     <div className="flex h-full flex-1 flex-col overflow-hidden bg-[#F5F5DC]/40">
-      {/* @ts-expect-error - Decimal vs Number type mismatch, handled at runtime */}
       <PosClient
         storeId={storeId}
         products={products}
