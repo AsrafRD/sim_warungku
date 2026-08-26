@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -27,8 +27,8 @@ import { Label } from "@/components/ui/label";
 import type { Product } from "@/generated/prisma/client";
 
 type PosProduct = Omit<Product, "buyPrice" | "sellPrice"> & {
-  buyPrice: number | any;
-  sellPrice: number | any;
+  buyPrice: number | unknown;
+  sellPrice: number | unknown;
   unit: {
     name: string;
   } | null;
@@ -57,11 +57,9 @@ export function PosClient({
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [successInvoice, setSuccessInvoice] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (cart.items.length === 0 && isCartOpen) {
-      setIsCartOpen(false);
-    }
-  }, [cart.items.length, isCartOpen]);
+  if (cart.items.length === 0 && isCartOpen) {
+    setIsCartOpen(false);
+  }
 
   const filteredProducts = products.filter((product) => {
     const keyword = search.toLowerCase();

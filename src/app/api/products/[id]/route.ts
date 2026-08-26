@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { db } from "@/lib/prisma";
 import { updateProductSchema } from "@/lib/validations/product.schema";
 import { validateStoreAccess } from "@/lib/auth";
@@ -100,7 +99,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     });
 
     return NextResponse.json({ success: true, message: "Produk berhasil diperbarui", data: updated });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
   }
 }
@@ -131,7 +130,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     await db.product.delete({ where: { id } });
 
     return NextResponse.json({ success: true, message: "Produk berhasil dihapus" });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
   }
 }

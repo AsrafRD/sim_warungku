@@ -100,12 +100,13 @@ export async function loginAction(
     }
 
     return { success: true, message: "Login berhasil", redirectUrl };
-  } catch (error: any) {
-    if (error?.type === "CredentialsSignin") {
+  } catch (error) {
+    const err = error as Error & { type?: string };
+    if (err?.type === "CredentialsSignin") {
       return { success: false, message: "Email atau password salah" };
     }
-    if (error?.message?.includes("NEXT_REDIRECT")) {
-      throw error;
+    if (err?.message?.includes("NEXT_REDIRECT")) {
+      throw err;
     }
     console.error("[loginAction]", error);
     return { success: false, message: "Terjadi kesalahan sistem" };

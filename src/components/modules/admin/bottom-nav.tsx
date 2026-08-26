@@ -134,8 +134,8 @@ export function BottomNav() {
                   className={cn(
                     "transition-transform duration-300",
                     isActive
-                      ? "size-5"
-                      : isPos
+                      // ? "size-5"
+                      // : isPos
                       ? "size-5"
                       : "size-[18px]",
                     "group-active:scale-90"

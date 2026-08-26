@@ -7,13 +7,24 @@ import { Button } from "@/components/ui/button";
 
 export default async function StoresPage() {
   const session = await auth();
+
   if (!session?.user?.id) {
     redirect("/login");
   }
 
   const stores = await db.store.findMany({
-    where: { ownerId: session.user.id },
-    orderBy: { createdAt: "asc" },
+    where: {
+      ownerId: session.user.id,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      address: true,
+    },
   });
 
   if (stores.length === 0) {
@@ -23,51 +34,69 @@ export default async function StoresPage() {
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-6 duration-700">
-        
-        <div className="text-center mb-8">
-          <div className="flex h-16 w-16 mx-auto items-center justify-center rounded-2xl bg-indigo-600 shadow-lg shadow-indigo-600/20 mb-6">
+
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FF8F00] shadow-lg shadow-orange-500/20">
             <Store className="size-8 text-white" />
           </div>
+
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Pilih Toko
           </h1>
-          <p className="text-sm text-slate-500 mt-2 max-w-[280px] mx-auto">
-            Anda memiliki akses ke beberapa toko. Silakan pilih toko yang ingin dibuka.
+
+          <p className="mx-auto mt-2 max-w-[280px] text-sm leading-relaxed text-slate-500">
+            Pilih toko yang ingin Anda kelola.
           </p>
         </div>
 
-        <div className="rounded-3xl bg-white p-4 shadow-sm border border-slate-100 sm:p-6 mb-4">
+        {/* Store List */}
+        <div className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm sm:p-5">
           <div className="space-y-3">
             {stores.map((store) => (
-              <Link 
-                key={store.id} 
-                href={`/${store.slug}/products`}
-                className="group flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-indigo-600 hover:shadow-md hover:shadow-indigo-600/10 transition-all bg-white"
+              <Link
+                key={store.id}
+                href={`/${store.slug}`}
+                className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 transition-all duration-200 hover:border-[#FF8F00] hover:bg-orange-50/30 hover:shadow-md hover:shadow-orange-500/10 active:scale-[0.99]"
               >
-                <div className="flex items-center gap-4">
-                  <div className="size-12 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
+                <div className="flex min-w-0 items-center gap-4">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-[#FF8F00] transition-colors group-hover:bg-[#FF8F00] group-hover:text-white">
                     <Store className="size-6" />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-slate-800">{store.name}</h3>
-                    <p className="text-xs text-slate-500 truncate max-w-[180px]">
+
+                  <div className="min-w-0">
+                    <h3 className="truncate text-sm font-bold text-slate-800">
+                      {store.name}
+                    </h3>
+
+                    <p className="mt-0.5 truncate text-xs text-slate-500">
                       {store.address || "Warung SaaS"}
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="size-5 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+
+                <div className="ml-3 flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-50 transition-all group-hover:bg-orange-100">
+                  <ArrowRight className="size-4 text-slate-400 transition-colors group-hover:text-[#FF8F00]" />
+                </div>
               </Link>
             ))}
           </div>
         </div>
 
-        <Link href="/onboarding" className="block w-full">
-          <Button variant="outline" className="w-full h-14 rounded-2xl border-dashed border-2 border-slate-300 text-slate-600 hover:text-slate-900 hover:border-slate-400 bg-transparent hover:bg-slate-50">
-            <Plus className="size-5 mr-2" />
+        {/* Add Store */}
+        <Link
+          href="/onboarding"
+          className="mt-4 block w-full"
+        >
+          <Button
+            variant="outline"
+            className="h-14 w-full rounded-2xl border-2 border-dashed border-slate-300 bg-transparent font-semibold text-slate-600 transition-all hover:border-[#FF8F00] hover:bg-orange-50 hover:text-[#FF8F00]"
+          >
+            <Plus className="mr-2 size-5" />
             Buka Cabang Baru
           </Button>
         </Link>
-        
+
       </div>
     </div>
   );

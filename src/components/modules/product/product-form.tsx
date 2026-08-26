@@ -7,7 +7,6 @@ import {
   Plus,
   Package,
   Tag,
-  Ruler,
   Truck,
   Barcode,
   CircleDollarSign,
@@ -52,7 +51,7 @@ import {
 
 interface ProductFormProps {
   storeId: string;
-  product?: any;
+  product?: import("@/generated/prisma/client").Product | null;
   suppliers: { id: string; name: string }[];
   categories: { id: string; name: string }[];
   units: { id: string; name: string }[];
@@ -313,9 +312,10 @@ export function ProductForm({
             ) : (
               <CldUploadWidget
                 uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-                onSuccess={(result: any) => {
-                  if (result.info?.secure_url) {
-                    setImageUrl(result.info.secure_url);
+                onSuccess={(result: unknown) => {
+                  const res = result as { info?: { secure_url?: string } };
+                  if (res.info?.secure_url) {
+                    setImageUrl(res.info.secure_url);
                   }
                 }}
               >

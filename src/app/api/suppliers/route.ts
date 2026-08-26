@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/prisma";
 import { validateStoreAccess } from "@/lib/auth";
 import { createSupplierSchema } from "@/lib/validations/supplier.schema";
-import bcrypt from "bcryptjs";
 
 export async function GET(req: Request) {
   try {

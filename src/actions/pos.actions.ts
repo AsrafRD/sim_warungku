@@ -4,7 +4,6 @@ import { z } from "zod";
 import { db } from "@/lib/prisma";
 import { validateStoreAccess } from "@/lib/auth";
 import type { ActionResponse } from "@/lib/types/action-response";
-import type { Order } from "@/generated/prisma/client";
 
 const checkoutSchema = z.object({
   items: z.array(
@@ -120,11 +119,12 @@ export async function createOrder(
       message: "Transaksi berhasil diproses",
       data: { invoiceNo: order.invoiceNo }
     };
-  } catch (error: any) {
+  } catch (error) {
     console.error("[createOrder]", error);
+    const err = error as Error;
     return { 
       success: false, 
-      message: error?.message || "Gagal memproses transaksi" 
+      message: err?.message || "Gagal memproses transaksi" 
     };
   }
 }

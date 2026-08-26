@@ -12,15 +12,21 @@ import {
 } from "lucide-react";
 import { formatRupiah } from "@/lib/format";
 
+import type { Order, OrderItem, Product } from "@/generated/prisma/client";
+
 interface OrderCardProps {
-  order: any;
+  order: Order & {
+    items: (OrderItem & {
+      product: Product;
+    })[];
+  };
 }
 
 export function OrderCard({ order }: OrderCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const itemCount = order.items.reduce(
-    (sum: number, item: any) => sum + item.quantity,
+    (sum, item) => sum + item.quantity,
     0
   );
 
@@ -207,7 +213,7 @@ export function OrderCard({ order }: OrderCardProps) {
 
                 <div className="overflow-hidden rounded-2xl border border-[#EDE8D2]">
 
-                  {order.items.map((item: any, index: number) => (
+                  {order.items.map((item, index) => (
                     <div
                       key={item.id}
                       className={`flex items-start justify-between gap-4 p-4 ${

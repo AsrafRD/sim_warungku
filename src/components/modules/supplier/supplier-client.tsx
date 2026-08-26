@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Building2, Phone, Mail, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface Supplier {
   id: string;
@@ -34,23 +34,22 @@ export function SupplierClient({ storeId }: { storeId: string }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        setIsLoading(true);
+        const res = await fetch(`/api/suppliers?storeId=${storeId}`);
+        const data = await res.json();
+        if (data.success) {
+          setSuppliers(data.data);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil data supplier", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchSuppliers();
   }, [storeId]);
-
-  const fetchSuppliers = async () => {
-    try {
-      setIsLoading(true);
-      const res = await fetch(`/api/suppliers?storeId=${storeId}`);
-      const data = await res.json();
-      if (data.success) {
-        setSuppliers(data.data);
-      }
-    } catch (err) {
-      console.error("Gagal mengambil data supplier", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleAddSupplier = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +83,7 @@ export function SupplierClient({ storeId }: { storeId: string }) {
       } else {
         setError(data.message || "Gagal menambahkan supplier");
       }
-    } catch (err) {
+    } catch {
       setError("Terjadi kesalahan jaringan");
     } finally {
       setIsSubmitting(false);

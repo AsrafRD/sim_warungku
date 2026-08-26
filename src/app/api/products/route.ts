@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { db } from "@/lib/prisma";
 import { productFilterSchema, createProductSchema } from "@/lib/validations/product.schema";
 import { validateStoreAccess } from "@/lib/auth";
@@ -22,8 +21,8 @@ export async function GET(req: Request) {
       search: searchParams.get("search") || undefined,
       categoryId: searchParams.get("categoryId") || undefined,
       unitId: searchParams.get("unitId") || undefined,
-      sortBy: (searchParams.get("sortBy") as any) || "createdAt",
-      sortOrder: (searchParams.get("sortOrder") as any) || "desc",
+      sortBy: (searchParams.get("sortBy") as string | undefined) || "createdAt",
+      sortOrder: (searchParams.get("sortOrder") as string | undefined) || "desc",
       page: parseInt(searchParams.get("page") || "1"),
       limit: parseInt(searchParams.get("limit") || "10"),
     };
@@ -69,7 +68,7 @@ export async function GET(req: Request) {
         totalPages: Math.ceil(total / limit),
       }
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
   }
 }
@@ -127,7 +126,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, message: "Produk berhasil ditambahkan", data: product });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
   }
 }

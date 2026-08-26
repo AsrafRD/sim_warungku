@@ -2,9 +2,8 @@ import { auth } from "@/auth";
 import { db } from "@/lib/prisma";
 import { validateSupplierAccess } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { ArrowLeft, Search, Package, AlertCircle } from "lucide-react";
+import { ArrowLeft, Package, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
 
 interface SupplierStorePageProps {
   params: Promise<{ storeId: string }>;
@@ -124,8 +123,8 @@ export default async function SupplierStorePage({ params }: SupplierStorePagePro
                         <p className="text-[10px] font-bold uppercase tracking-wider text-black/40 mb-0.5">Sisa Stok</p>
                         <p className={`font-black text-lg leading-none ${isLowStock ? 'text-[#C62828]' : 'text-black'}`}>
                           {product.currentStock} <span className="text-xs font-bold text-black/40 ml-0.5">
-                            {/* @ts-ignore */}
-                            {product.unit?.name || "PCS"}
+                          {/* @ts-expect-error - unit object might be partially typed */}
+                          {product.unit?.name || "PCS"}
                           </span>
                         </p>
                       </div>

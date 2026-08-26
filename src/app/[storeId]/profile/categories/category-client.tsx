@@ -6,7 +6,6 @@ import { Plus, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createCategory, deleteCategory } from "@/actions/settings.actions";
-import { formatRupiah } from "@/lib/format";
 
 export function CategoryClient({
   storeId,

@@ -93,7 +93,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={isPending}
-            className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-[15px] transition-colors"
+            className="w-full h-12 rounded-xl bg-[#FF8F00] hover:bg-[#e68100] text-white font-semibold text-[15px] transition-colors"
           >
             {isPending ? (
               <>
@@ -111,7 +111,7 @@ export default function LoginPage() {
         Belum punya akun?{" "}
         <Link
           href="/register"
-          className="font-semibold text-indigo-600 hover:text-indigo-500"
+          className="font-semibold text-[#FF8F00] hover:text-[#e68100]"
         >
           Daftar sekarang
         </Link>

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { signOut } from "next-auth/react";
+
 
 interface AdminHeaderProps {
   /** Title displayed in the center/left of the header */
@@ -24,9 +24,7 @@ export function AdminHeader({
 }: AdminHeaderProps) {
   const router = useRouter();
 
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: "/login" });
-  };
+
 
   return (
     <header
