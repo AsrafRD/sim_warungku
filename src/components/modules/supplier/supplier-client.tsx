@@ -33,21 +33,22 @@ export function SupplierClient({ storeId }: { storeId: string }) {
 
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchSuppliers = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(`/api/suppliers?storeId=${storeId}`);
-        const data = await res.json();
-        if (data.success) {
-          setSuppliers(data.data);
-        }
-      } catch (err) {
-        console.error("Gagal mengambil data supplier", err);
-      } finally {
-        setIsLoading(false);
+  const fetchSuppliers = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`/api/suppliers?storeId=${storeId}`);
+      const data = await res.json();
+      if (data.success) {
+        setSuppliers(data.data);
       }
-    };
+    } catch (err) {
+      console.error("Gagal mengambil data supplier", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchSuppliers();
   }, [storeId]);
 

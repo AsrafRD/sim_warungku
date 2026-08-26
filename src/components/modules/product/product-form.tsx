@@ -51,7 +51,7 @@ import {
 
 interface ProductFormProps {
   storeId: string;
-  product?: import("@/generated/prisma/client").Product | null;
+  product?: any;
   suppliers: { id: string; name: string }[];
   categories: { id: string; name: string }[];
   units: { id: string; name: string }[];

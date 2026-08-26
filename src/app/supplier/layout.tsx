@@ -8,7 +8,6 @@ export default async function SupplierLayout({
 }) {
   const session = await auth();
   
-  // @ts-expect-error - session.user.role is not fully typed yet
   if (!session?.user || session.user.role !== "SUPPLIER") {
     redirect("/");
   }

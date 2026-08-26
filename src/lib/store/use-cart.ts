@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import type { Product } from "@/generated/prisma/client";
 
-export type CartProduct = Product & {
+export type CartProduct = Omit<Product, "buyPrice" | "sellPrice"> & {
+  buyPrice: any;
+  sellPrice: any;
   unit?: { name: string } | null;
 };
 

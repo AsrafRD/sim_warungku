@@ -123,7 +123,6 @@ export default async function SupplierStorePage({ params }: SupplierStorePagePro
                         <p className="text-[10px] font-bold uppercase tracking-wider text-black/40 mb-0.5">Sisa Stok</p>
                         <p className={`font-black text-lg leading-none ${isLowStock ? 'text-[#C62828]' : 'text-black'}`}>
                           {product.currentStock} <span className="text-xs font-bold text-black/40 ml-0.5">
-                          {/* @ts-expect-error - unit object might be partially typed */}
                           {product.unit?.name || "PCS"}
                           </span>
                         </p>
