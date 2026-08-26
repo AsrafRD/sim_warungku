@@ -236,11 +236,11 @@ export type SupplierOrderByWithRelationInput = {
 
 export type SupplierWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  userId?: string
   AND?: Prisma.SupplierWhereInput | Prisma.SupplierWhereInput[]
   OR?: Prisma.SupplierWhereInput[]
   NOT?: Prisma.SupplierWhereInput | Prisma.SupplierWhereInput[]
   storeId?: Prisma.StringFilter<"Supplier"> | string
+  userId?: Prisma.StringNullableFilter<"Supplier"> | string | null
   name?: Prisma.StringFilter<"Supplier"> | string
   contactName?: Prisma.StringNullableFilter<"Supplier"> | string | null
   phone?: Prisma.StringNullableFilter<"Supplier"> | string | null
@@ -250,7 +250,7 @@ export type SupplierWhereUniqueInput = Prisma.AtLeast<{
   store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   products?: Prisma.ProductListRelationFilter
-}, "id" | "userId">
+}, "id">
 
 export type SupplierOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -291,7 +291,7 @@ export type SupplierCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   store: Prisma.StoreCreateNestedOneWithoutSuppliersInput
-  user?: Prisma.UserCreateNestedOneWithoutSupplierProfileInput
+  user?: Prisma.UserCreateNestedOneWithoutSupplierProfilesInput
   products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
 }
 
@@ -317,7 +317,7 @@ export type SupplierUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   store?: Prisma.StoreUpdateOneRequiredWithoutSuppliersNestedInput
-  user?: Prisma.UserUpdateOneWithoutSupplierProfileNestedInput
+  user?: Prisma.UserUpdateOneWithoutSupplierProfilesNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
 }
 
@@ -368,11 +368,6 @@ export type SupplierUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type SupplierNullableScalarRelationFilter = {
-  is?: Prisma.SupplierWhereInput | null
-  isNot?: Prisma.SupplierWhereInput | null
-}
-
 export type SupplierListRelationFilter = {
   every?: Prisma.SupplierWhereInput
   some?: Prisma.SupplierWhereInput
@@ -419,36 +414,51 @@ export type SupplierMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type SupplierCreateNestedOneWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutUserInput
-  connect?: Prisma.SupplierWhereUniqueInput
+export type SupplierNullableScalarRelationFilter = {
+  is?: Prisma.SupplierWhereInput | null
+  isNot?: Prisma.SupplierWhereInput | null
 }
 
-export type SupplierUncheckedCreateNestedOneWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutUserInput
-  connect?: Prisma.SupplierWhereUniqueInput
+export type SupplierCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput> | Prisma.SupplierCreateWithoutUserInput[] | Prisma.SupplierUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutUserInput | Prisma.SupplierCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.SupplierCreateManyUserInputEnvelope
+  connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
 }
 
-export type SupplierUpdateOneWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutUserInput
-  upsert?: Prisma.SupplierUpsertWithoutUserInput
-  disconnect?: Prisma.SupplierWhereInput | boolean
-  delete?: Prisma.SupplierWhereInput | boolean
-  connect?: Prisma.SupplierWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SupplierUpdateToOneWithWhereWithoutUserInput, Prisma.SupplierUpdateWithoutUserInput>, Prisma.SupplierUncheckedUpdateWithoutUserInput>
+export type SupplierUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput> | Prisma.SupplierCreateWithoutUserInput[] | Prisma.SupplierUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutUserInput | Prisma.SupplierCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.SupplierCreateManyUserInputEnvelope
+  connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
 }
 
-export type SupplierUncheckedUpdateOneWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutUserInput
-  upsert?: Prisma.SupplierUpsertWithoutUserInput
-  disconnect?: Prisma.SupplierWhereInput | boolean
-  delete?: Prisma.SupplierWhereInput | boolean
-  connect?: Prisma.SupplierWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.SupplierUpdateToOneWithWhereWithoutUserInput, Prisma.SupplierUpdateWithoutUserInput>, Prisma.SupplierUncheckedUpdateWithoutUserInput>
+export type SupplierUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput> | Prisma.SupplierCreateWithoutUserInput[] | Prisma.SupplierUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutUserInput | Prisma.SupplierCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.SupplierUpsertWithWhereUniqueWithoutUserInput | Prisma.SupplierUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.SupplierCreateManyUserInputEnvelope
+  set?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  disconnect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  delete?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  update?: Prisma.SupplierUpdateWithWhereUniqueWithoutUserInput | Prisma.SupplierUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.SupplierUpdateManyWithWhereWithoutUserInput | Prisma.SupplierUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
+}
+
+export type SupplierUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput> | Prisma.SupplierCreateWithoutUserInput[] | Prisma.SupplierUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.SupplierCreateOrConnectWithoutUserInput | Prisma.SupplierCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.SupplierUpsertWithWhereUniqueWithoutUserInput | Prisma.SupplierUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.SupplierCreateManyUserInputEnvelope
+  set?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  disconnect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  delete?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  connect?: Prisma.SupplierWhereUniqueInput | Prisma.SupplierWhereUniqueInput[]
+  update?: Prisma.SupplierUpdateWithWhereUniqueWithoutUserInput | Prisma.SupplierUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.SupplierUpdateManyWithWhereWithoutUserInput | Prisma.SupplierUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
 }
 
 export type SupplierCreateNestedManyWithoutStoreInput = {
@@ -538,39 +548,40 @@ export type SupplierCreateOrConnectWithoutUserInput = {
   create: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput>
 }
 
-export type SupplierUpsertWithoutUserInput = {
-  update: Prisma.XOR<Prisma.SupplierUpdateWithoutUserInput, Prisma.SupplierUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput>
-  where?: Prisma.SupplierWhereInput
+export type SupplierCreateManyUserInputEnvelope = {
+  data: Prisma.SupplierCreateManyUserInput | Prisma.SupplierCreateManyUserInput[]
+  skipDuplicates?: boolean
 }
 
-export type SupplierUpdateToOneWithWhereWithoutUserInput = {
-  where?: Prisma.SupplierWhereInput
+export type SupplierUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.SupplierWhereUniqueInput
+  update: Prisma.XOR<Prisma.SupplierUpdateWithoutUserInput, Prisma.SupplierUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.SupplierCreateWithoutUserInput, Prisma.SupplierUncheckedCreateWithoutUserInput>
+}
+
+export type SupplierUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.SupplierWhereUniqueInput
   data: Prisma.XOR<Prisma.SupplierUpdateWithoutUserInput, Prisma.SupplierUncheckedUpdateWithoutUserInput>
 }
 
-export type SupplierUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  store?: Prisma.StoreUpdateOneRequiredWithoutSuppliersNestedInput
-  products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+export type SupplierUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.SupplierScalarWhereInput
+  data: Prisma.XOR<Prisma.SupplierUpdateManyMutationInput, Prisma.SupplierUncheckedUpdateManyWithoutUserInput>
 }
 
-export type SupplierUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  storeId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+export type SupplierScalarWhereInput = {
+  AND?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
+  OR?: Prisma.SupplierScalarWhereInput[]
+  NOT?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
+  id?: Prisma.StringFilter<"Supplier"> | string
+  storeId?: Prisma.StringFilter<"Supplier"> | string
+  userId?: Prisma.StringNullableFilter<"Supplier"> | string | null
+  name?: Prisma.StringFilter<"Supplier"> | string
+  contactName?: Prisma.StringNullableFilter<"Supplier"> | string | null
+  phone?: Prisma.StringNullableFilter<"Supplier"> | string | null
+  address?: Prisma.StringNullableFilter<"Supplier"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
 }
 
 export type SupplierCreateWithoutStoreInput = {
@@ -581,7 +592,7 @@ export type SupplierCreateWithoutStoreInput = {
   address?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  user?: Prisma.UserCreateNestedOneWithoutSupplierProfileInput
+  user?: Prisma.UserCreateNestedOneWithoutSupplierProfilesInput
   products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
 }
 
@@ -623,21 +634,6 @@ export type SupplierUpdateManyWithWhereWithoutStoreInput = {
   data: Prisma.XOR<Prisma.SupplierUpdateManyMutationInput, Prisma.SupplierUncheckedUpdateManyWithoutStoreInput>
 }
 
-export type SupplierScalarWhereInput = {
-  AND?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
-  OR?: Prisma.SupplierScalarWhereInput[]
-  NOT?: Prisma.SupplierScalarWhereInput | Prisma.SupplierScalarWhereInput[]
-  id?: Prisma.StringFilter<"Supplier"> | string
-  storeId?: Prisma.StringFilter<"Supplier"> | string
-  userId?: Prisma.StringNullableFilter<"Supplier"> | string | null
-  name?: Prisma.StringFilter<"Supplier"> | string
-  contactName?: Prisma.StringNullableFilter<"Supplier"> | string | null
-  phone?: Prisma.StringNullableFilter<"Supplier"> | string | null
-  address?: Prisma.StringNullableFilter<"Supplier"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Supplier"> | Date | string
-}
-
 export type SupplierCreateWithoutProductsInput = {
   id?: string
   name: string
@@ -647,7 +643,7 @@ export type SupplierCreateWithoutProductsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   store: Prisma.StoreCreateNestedOneWithoutSuppliersInput
-  user?: Prisma.UserCreateNestedOneWithoutSupplierProfileInput
+  user?: Prisma.UserCreateNestedOneWithoutSupplierProfilesInput
 }
 
 export type SupplierUncheckedCreateWithoutProductsInput = {
@@ -687,13 +683,59 @@ export type SupplierUpdateWithoutProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   store?: Prisma.StoreUpdateOneRequiredWithoutSuppliersNestedInput
-  user?: Prisma.UserUpdateOneWithoutSupplierProfileNestedInput
+  user?: Prisma.UserUpdateOneWithoutSupplierProfilesNestedInput
 }
 
 export type SupplierUncheckedUpdateWithoutProductsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   storeId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SupplierCreateManyUserInput = {
+  id?: string
+  storeId: string
+  name: string
+  contactName?: string | null
+  phone?: string | null
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SupplierUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  store?: Prisma.StoreUpdateOneRequiredWithoutSuppliersNestedInput
+  products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+}
+
+export type SupplierUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storeId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+}
+
+export type SupplierUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  storeId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   contactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -721,7 +763,7 @@ export type SupplierUpdateWithoutStoreInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneWithoutSupplierProfileNestedInput
+  user?: Prisma.UserUpdateOneWithoutSupplierProfilesNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
 }
 

@@ -78,6 +78,11 @@ export const updateProductSchema = z.object({
     .int("Min. stok harus bilangan bulat")
     .min(0, "Min. stok tidak boleh negatif")
     .default(5),
+  currentStock: z
+    .number({ error: "Stok harus berupa angka" })
+    .int("Stok harus bilangan bulat")
+    .min(0, "Stok tidak boleh negatif")
+    .optional(),
   supplierId: z
     .string()
     .optional()

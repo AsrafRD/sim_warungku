@@ -328,22 +328,20 @@ export function ProductForm({
 
       {/* Stock (only on create) & Min Stock Warning */}
       <div className="grid grid-cols-2 gap-3">
-        {!isEditing && (
-          <div className="space-y-1.5">
-            <Label htmlFor="currentStock">Stok Awal</Label>
-            <Input
-              id="currentStock"
-              type="number"
-              inputMode="numeric"
-              placeholder="0"
-              value={currentStock}
-              onChange={(e) => setCurrentStock(e.target.value)}
-              className="h-11 rounded-xl"
-            />
-            <FieldError errors={errors} field="currentStock" />
-          </div>
-        )}
-        <div className={`space-y-1.5 ${isEditing ? "col-span-2" : ""}`}>
+        <div className="space-y-1.5">
+          <Label htmlFor="currentStock">{isEditing ? "Restock / Ubah Stok" : "Stok Awal"}</Label>
+          <Input
+            id="currentStock"
+            type="number"
+            inputMode="numeric"
+            placeholder="0"
+            value={currentStock}
+            onChange={(e) => setCurrentStock(e.target.value)}
+            className="h-11 rounded-xl"
+          />
+          <FieldError errors={errors} field="currentStock" />
+        </div>
+        <div className="space-y-1.5">
           <Label htmlFor="minStockWarning">Min. Stok Alert</Label>
           <Input
             id="minStockWarning"
@@ -364,7 +362,11 @@ export function ProductForm({
           <Label>Supplier</Label>
           <Select value={supplierId} onValueChange={(v) => setSupplierId(v ?? "")}>
             <SelectTrigger className="h-11 w-full rounded-xl">
-              <SelectValue placeholder="Pilih supplier (opsional)" />
+              <span className="truncate flex-1 text-left">
+                {supplierId 
+                  ? suppliers.find(s => s.id === supplierId)?.name || "Pilih supplier" 
+                  : <span className="text-muted-foreground">Pilih supplier (opsional)</span>}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {suppliers.map((supplier) => (

@@ -10,6 +10,7 @@ const registerSchema = z.object({
   name: z.string().min(2, "Nama minimal 2 karakter"),
   email: z.string().email("Email tidak valid"),
   password: z.string().min(6, "Password minimal 6 karakter"),
+  role: z.enum(["OWNER", "SUPPLIER"]).default("OWNER"),
 });
 
 export async function registerAction(
@@ -25,7 +26,7 @@ export async function registerAction(
       };
     }
 
-    const { name, email, password } = parsed.data;
+    const { name, email, password, role } = parsed.data;
 
     const existing = await db.user.findUnique({
       where: { email },
@@ -42,7 +43,7 @@ export async function registerAction(
         name,
         email,
         password: hashedPassword,
-        role: "OWNER",
+        role: role,
       },
     });
 
@@ -89,7 +90,9 @@ export async function loginAction(
 
     let redirectUrl = "/onboarding";
     if (user) {
-      if (user.ownedStores.length === 1) {
+      if (user.role === "SUPPLIER") {
+        redirectUrl = "/supplier";
+      } else if (user.ownedStores.length === 1) {
         redirectUrl = `/${user.ownedStores[0].slug}/products`;
       } else if (user.ownedStores.length > 1) {
         redirectUrl = "/stores";

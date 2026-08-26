@@ -206,9 +206,9 @@ export type UserWhereInput = {
   phone?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  supplierProfile?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
   ownedStores?: Prisma.StoreListRelationFilter
   performedOpnames?: Prisma.StockOpnameListRelationFilter
+  supplierProfiles?: Prisma.SupplierListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -220,9 +220,9 @@ export type UserOrderByWithRelationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  supplierProfile?: Prisma.SupplierOrderByWithRelationInput
   ownedStores?: Prisma.StoreOrderByRelationAggregateInput
   performedOpnames?: Prisma.StockOpnameOrderByRelationAggregateInput
+  supplierProfiles?: Prisma.SupplierOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -237,9 +237,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  supplierProfile?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
   ownedStores?: Prisma.StoreListRelationFilter
   performedOpnames?: Prisma.StockOpnameListRelationFilter
+  supplierProfiles?: Prisma.SupplierListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -279,9 +279,9 @@ export type UserCreateInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  supplierProfile?: Prisma.SupplierCreateNestedOneWithoutUserInput
   ownedStores?: Prisma.StoreCreateNestedManyWithoutOwnerInput
   performedOpnames?: Prisma.StockOpnameCreateNestedManyWithoutExecutorInput
+  supplierProfiles?: Prisma.SupplierCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -293,9 +293,9 @@ export type UserUncheckedCreateInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  supplierProfile?: Prisma.SupplierUncheckedCreateNestedOneWithoutUserInput
   ownedStores?: Prisma.StoreUncheckedCreateNestedManyWithoutOwnerInput
   performedOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutExecutorInput
+  supplierProfiles?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -307,9 +307,9 @@ export type UserUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  supplierProfile?: Prisma.SupplierUpdateOneWithoutUserNestedInput
   ownedStores?: Prisma.StoreUpdateManyWithoutOwnerNestedInput
   performedOpnames?: Prisma.StockOpnameUpdateManyWithoutExecutorNestedInput
+  supplierProfiles?: Prisma.SupplierUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -321,9 +321,9 @@ export type UserUncheckedUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  supplierProfile?: Prisma.SupplierUncheckedUpdateOneWithoutUserNestedInput
   ownedStores?: Prisma.StoreUncheckedUpdateManyWithoutOwnerNestedInput
   performedOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutExecutorNestedInput
+  supplierProfiles?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -432,20 +432,20 @@ export type UserUpdateOneRequiredWithoutOwnedStoresNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOwnedStoresInput, Prisma.UserUpdateWithoutOwnedStoresInput>, Prisma.UserUncheckedUpdateWithoutOwnedStoresInput>
 }
 
-export type UserCreateNestedOneWithoutSupplierProfileInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutSupplierProfileInput, Prisma.UserUncheckedCreateWithoutSupplierProfileInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSupplierProfileInput
+export type UserCreateNestedOneWithoutSupplierProfilesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSupplierProfilesInput, Prisma.UserUncheckedCreateWithoutSupplierProfilesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSupplierProfilesInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneWithoutSupplierProfileNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutSupplierProfileInput, Prisma.UserUncheckedCreateWithoutSupplierProfileInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSupplierProfileInput
-  upsert?: Prisma.UserUpsertWithoutSupplierProfileInput
+export type UserUpdateOneWithoutSupplierProfilesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSupplierProfilesInput, Prisma.UserUncheckedCreateWithoutSupplierProfilesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSupplierProfilesInput
+  upsert?: Prisma.UserUpsertWithoutSupplierProfilesInput
   disconnect?: Prisma.UserWhereInput | boolean
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSupplierProfileInput, Prisma.UserUpdateWithoutSupplierProfileInput>, Prisma.UserUncheckedUpdateWithoutSupplierProfileInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSupplierProfilesInput, Prisma.UserUpdateWithoutSupplierProfilesInput>, Prisma.UserUncheckedUpdateWithoutSupplierProfilesInput>
 }
 
 export type UserCreateNestedOneWithoutPerformedOpnamesInput = {
@@ -471,8 +471,8 @@ export type UserCreateWithoutOwnedStoresInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  supplierProfile?: Prisma.SupplierCreateNestedOneWithoutUserInput
   performedOpnames?: Prisma.StockOpnameCreateNestedManyWithoutExecutorInput
+  supplierProfiles?: Prisma.SupplierCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOwnedStoresInput = {
@@ -484,8 +484,8 @@ export type UserUncheckedCreateWithoutOwnedStoresInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  supplierProfile?: Prisma.SupplierUncheckedCreateNestedOneWithoutUserInput
   performedOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutExecutorInput
+  supplierProfiles?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOwnedStoresInput = {
@@ -513,8 +513,8 @@ export type UserUpdateWithoutOwnedStoresInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  supplierProfile?: Prisma.SupplierUpdateOneWithoutUserNestedInput
   performedOpnames?: Prisma.StockOpnameUpdateManyWithoutExecutorNestedInput
+  supplierProfiles?: Prisma.SupplierUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedStoresInput = {
@@ -526,11 +526,11 @@ export type UserUncheckedUpdateWithoutOwnedStoresInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  supplierProfile?: Prisma.SupplierUncheckedUpdateOneWithoutUserNestedInput
   performedOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutExecutorNestedInput
+  supplierProfiles?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutSupplierProfileInput = {
+export type UserCreateWithoutSupplierProfilesInput = {
   id?: string
   email: string
   name: string
@@ -543,7 +543,7 @@ export type UserCreateWithoutSupplierProfileInput = {
   performedOpnames?: Prisma.StockOpnameCreateNestedManyWithoutExecutorInput
 }
 
-export type UserUncheckedCreateWithoutSupplierProfileInput = {
+export type UserUncheckedCreateWithoutSupplierProfilesInput = {
   id?: string
   email: string
   name: string
@@ -556,23 +556,23 @@ export type UserUncheckedCreateWithoutSupplierProfileInput = {
   performedOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutExecutorInput
 }
 
-export type UserCreateOrConnectWithoutSupplierProfileInput = {
+export type UserCreateOrConnectWithoutSupplierProfilesInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutSupplierProfileInput, Prisma.UserUncheckedCreateWithoutSupplierProfileInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSupplierProfilesInput, Prisma.UserUncheckedCreateWithoutSupplierProfilesInput>
 }
 
-export type UserUpsertWithoutSupplierProfileInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutSupplierProfileInput, Prisma.UserUncheckedUpdateWithoutSupplierProfileInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutSupplierProfileInput, Prisma.UserUncheckedCreateWithoutSupplierProfileInput>
+export type UserUpsertWithoutSupplierProfilesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSupplierProfilesInput, Prisma.UserUncheckedUpdateWithoutSupplierProfilesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSupplierProfilesInput, Prisma.UserUncheckedCreateWithoutSupplierProfilesInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutSupplierProfileInput = {
+export type UserUpdateToOneWithWhereWithoutSupplierProfilesInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutSupplierProfileInput, Prisma.UserUncheckedUpdateWithoutSupplierProfileInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSupplierProfilesInput, Prisma.UserUncheckedUpdateWithoutSupplierProfilesInput>
 }
 
-export type UserUpdateWithoutSupplierProfileInput = {
+export type UserUpdateWithoutSupplierProfilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -585,7 +585,7 @@ export type UserUpdateWithoutSupplierProfileInput = {
   performedOpnames?: Prisma.StockOpnameUpdateManyWithoutExecutorNestedInput
 }
 
-export type UserUncheckedUpdateWithoutSupplierProfileInput = {
+export type UserUncheckedUpdateWithoutSupplierProfilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -607,8 +607,8 @@ export type UserCreateWithoutPerformedOpnamesInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  supplierProfile?: Prisma.SupplierCreateNestedOneWithoutUserInput
   ownedStores?: Prisma.StoreCreateNestedManyWithoutOwnerInput
+  supplierProfiles?: Prisma.SupplierCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPerformedOpnamesInput = {
@@ -620,8 +620,8 @@ export type UserUncheckedCreateWithoutPerformedOpnamesInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  supplierProfile?: Prisma.SupplierUncheckedCreateNestedOneWithoutUserInput
   ownedStores?: Prisma.StoreUncheckedCreateNestedManyWithoutOwnerInput
+  supplierProfiles?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPerformedOpnamesInput = {
@@ -649,8 +649,8 @@ export type UserUpdateWithoutPerformedOpnamesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  supplierProfile?: Prisma.SupplierUpdateOneWithoutUserNestedInput
   ownedStores?: Prisma.StoreUpdateManyWithoutOwnerNestedInput
+  supplierProfiles?: Prisma.SupplierUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPerformedOpnamesInput = {
@@ -662,8 +662,8 @@ export type UserUncheckedUpdateWithoutPerformedOpnamesInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  supplierProfile?: Prisma.SupplierUncheckedUpdateOneWithoutUserNestedInput
   ownedStores?: Prisma.StoreUncheckedUpdateManyWithoutOwnerNestedInput
+  supplierProfiles?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -674,11 +674,13 @@ export type UserUncheckedUpdateWithoutPerformedOpnamesInput = {
 export type UserCountOutputType = {
   ownedStores: number
   performedOpnames: number
+  supplierProfiles: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ownedStores?: boolean | UserCountOutputTypeCountOwnedStoresArgs
   performedOpnames?: boolean | UserCountOutputTypeCountPerformedOpnamesArgs
+  supplierProfiles?: boolean | UserCountOutputTypeCountSupplierProfilesArgs
 }
 
 /**
@@ -705,6 +707,13 @@ export type UserCountOutputTypeCountPerformedOpnamesArgs<ExtArgs extends runtime
   where?: Prisma.StockOpnameWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSupplierProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplierWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -715,9 +724,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   phone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  supplierProfile?: boolean | Prisma.User$supplierProfileArgs<ExtArgs>
   ownedStores?: boolean | Prisma.User$ownedStoresArgs<ExtArgs>
   performedOpnames?: boolean | Prisma.User$performedOpnamesArgs<ExtArgs>
+  supplierProfiles?: boolean | Prisma.User$supplierProfilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -756,9 +765,9 @@ export type UserSelectScalar = {
 
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "password" | "role" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  supplierProfile?: boolean | Prisma.User$supplierProfileArgs<ExtArgs>
   ownedStores?: boolean | Prisma.User$ownedStoresArgs<ExtArgs>
   performedOpnames?: boolean | Prisma.User$performedOpnamesArgs<ExtArgs>
+  supplierProfiles?: boolean | Prisma.User$supplierProfilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -767,9 +776,9 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
-    supplierProfile: Prisma.$SupplierPayload<ExtArgs> | null
     ownedStores: Prisma.$StorePayload<ExtArgs>[]
     performedOpnames: Prisma.$StockOpnamePayload<ExtArgs>[]
+    supplierProfiles: Prisma.$SupplierPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1174,9 +1183,9 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  supplierProfile<T extends Prisma.User$supplierProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supplierProfileArgs<ExtArgs>>): Prisma.Prisma__SupplierClient<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   ownedStores<T extends Prisma.User$ownedStoresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownedStoresArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   performedOpnames<T extends Prisma.User$performedOpnamesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$performedOpnamesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockOpnamePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supplierProfiles<T extends Prisma.User$supplierProfilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supplierProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1607,25 +1616,6 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * User.supplierProfile
- */
-export type User$supplierProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Supplier
-   */
-  select?: Prisma.SupplierSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Supplier
-   */
-  omit?: Prisma.SupplierOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SupplierInclude<ExtArgs> | null
-  where?: Prisma.SupplierWhereInput
-}
-
-/**
  * User.ownedStores
  */
 export type User$ownedStoresArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1671,6 +1661,30 @@ export type User$performedOpnamesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.StockOpnameScalarFieldEnum | Prisma.StockOpnameScalarFieldEnum[]
+}
+
+/**
+ * User.supplierProfiles
+ */
+export type User$supplierProfilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Supplier
+   */
+  select?: Prisma.SupplierSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Supplier
+   */
+  omit?: Prisma.SupplierOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplierInclude<ExtArgs> | null
+  where?: Prisma.SupplierWhereInput
+  orderBy?: Prisma.SupplierOrderByWithRelationInput | Prisma.SupplierOrderByWithRelationInput[]
+  cursor?: Prisma.SupplierWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupplierScalarFieldEnum | Prisma.SupplierScalarFieldEnum[]
 }
 
 /**

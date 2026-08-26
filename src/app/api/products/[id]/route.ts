@@ -55,19 +55,47 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       }
     }
 
-    const updated = await db.product.update({
-      where: { id },
-      data: {
-        name: data.name,
-        sku: data.sku,
-        barcode: data.barcode,
-        unitId: data.unitId || null,
-        categoryId: data.categoryId || null,
-        supplierId: data.supplierId || null,
-        buyPrice: data.buyPrice,
-        sellPrice: data.sellPrice,
-        minStockWarning: data.minStockWarning,
-      },
+    // Handle Stock Update & Logging if stock is changed
+    let newStock = existing.currentStock;
+    let stockUpdated = false;
+
+    if (data.currentStock !== undefined && data.currentStock !== existing.currentStock) {
+      newStock = data.currentStock;
+      stockUpdated = true;
+    }
+
+    const updated = await db.$transaction(async (tx) => {
+      const prod = await tx.product.update({
+        where: { id },
+        data: {
+          name: data.name,
+          sku: data.sku,
+          barcode: data.barcode,
+          unitId: data.unitId || null,
+          categoryId: data.categoryId || null,
+          supplierId: data.supplierId || null,
+          buyPrice: data.buyPrice,
+          sellPrice: data.sellPrice,
+          minStockWarning: data.minStockWarning,
+          currentStock: newStock,
+        },
+      });
+
+      if (stockUpdated) {
+        await tx.stockLog.create({
+          data: {
+            storeId: storeDbId,
+            productId: id,
+            type: newStock > existing.currentStock ? "IN" : "OPNAME_ADJUSTMENT",
+            quantity: Math.abs(newStock - existing.currentStock),
+            stockBefore: existing.currentStock,
+            stockAfter: newStock,
+            notes: "Restock / Penyesuaian Manual"
+          }
+        });
+      }
+
+      return prod;
     });
 
     return NextResponse.json({ success: true, message: "Produk berhasil diperbarui", data: updated });

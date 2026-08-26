@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"OWNER" | "SUPPLIER">("OWNER");
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
@@ -24,7 +25,7 @@ export default function RegisterPage() {
     setFieldErrors({});
 
     startTransition(async () => {
-      const result = await registerAction({ name, email, password });
+      const result = await registerAction({ name, email, password, role });
       
       if (result.success) {
         // Navigate to login page
@@ -101,6 +102,34 @@ export default function RegisterPage() {
           {fieldErrors.password && (
             <p className="text-xs text-red-500">{fieldErrors.password[0]}</p>
           )}
+        </div>
+
+        <div className="space-y-1.5 pt-2">
+          <Label>Mendaftar Sebagai</Label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setRole("OWNER")}
+              className={`h-12 rounded-xl text-sm font-bold border-2 transition-all ${
+                role === "OWNER"
+                  ? "border-[#FF8F00] bg-[#FF8F00]/10 text-[#FF8F00]"
+                  : "border-slate-200 text-slate-500 hover:border-[#FF8F00]/50"
+              }`}
+            >
+              Pemilik Toko
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("SUPPLIER")}
+              className={`h-12 rounded-xl text-sm font-bold border-2 transition-all ${
+                role === "SUPPLIER"
+                  ? "border-[#FF8F00] bg-[#FF8F00]/10 text-[#FF8F00]"
+                  : "border-slate-200 text-slate-500 hover:border-[#FF8F00]/50"
+              }`}
+            >
+              Supplier
+            </button>
+          </div>
         </div>
 
         <div className="pt-2">

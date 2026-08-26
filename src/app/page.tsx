@@ -66,13 +66,28 @@ export default async function Home() {
         {/* Call to Action */}
         <div className="mt-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 fill-mode-both">
           <Link
-            href={isLoggedIn ? (hasStore ? `/${storeSlug}/products` : "/onboarding") : "/login"}
-            className="flex items-center justify-center gap-2 w-full h-14 rounded-2xl bg-slate-900 text-white font-semibold text-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-slate-800 hover:scale-[0.98] transition-all active:scale-95"
+            href={
+              isLoggedIn
+                ? // @ts-ignore
+                  session.user.role === "SUPPLIER"
+                  ? "/supplier"
+                  : hasStore
+                  ? `/${storeSlug}/products`
+                  : "/onboarding"
+                : "/login"
+            }
+            className="flex items-center justify-center gap-2 w-full h-14 rounded-2xl bg-[#FF8F00] text-white font-semibold text-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all hover:scale-[0.98] active:scale-95"
           >
-            {isLoggedIn ? (hasStore ? "Masuk ke Dashboard" : "Buat Toko Anda") : "Mulai Sekarang"}
+            {isLoggedIn 
+              ? (
+                  // @ts-ignore
+                  session.user.role === "SUPPLIER" ? "Masuk ke Dashboard Supplier" 
+                  : (hasStore ? "Masuk ke Dashboard Toko" : "Buat Toko Anda")
+                ) 
+              : "Mulai Sekarang"}
             <ArrowRight className="size-5" />
           </Link>
-          <p className="text-center text-xs text-slate-400 mt-4">
+          <p className="text-center text-xs text-black/60 mt-4">
             {isLoggedIn ? "Anda sudah masuk ke sistem" : "Gratis selamanya untuk fitur dasar"}
           </p>
         </div>

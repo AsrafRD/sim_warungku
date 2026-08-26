@@ -39,3 +39,22 @@ export async function validateStoreAccess(storeSlug: string): Promise<string | n
 
   return store?.id || null;
 }
+
+/**
+ * Validates that the requesting user has supplier access to a given storeId (slug).
+ * Used in supplier layouts to protect supplier boundaries.
+ */
+export async function validateSupplierAccess(storeSlug: string): Promise<string | null> {
+  const session = await auth();
+  if (!session?.user?.id) return null;
+
+  const supplier = await db.supplier.findFirst({
+    where: {
+      userId: session.user.id,
+      store: { slug: storeSlug }
+    },
+    select: { storeId: true }
+  });
+
+  return supplier?.storeId || null;
+}
