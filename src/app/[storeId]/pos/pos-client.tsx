@@ -26,20 +26,12 @@ import { Label } from "@/components/ui/label";
 
 import type { Product } from "@/generated/prisma/client";
 
-type PosProduct = Omit<Product, "buyPrice" | "sellPrice"> & {
-  buyPrice: number | unknown;
-  sellPrice: number | unknown;
-  unit: {
-    name: string;
-  } | null;
-};
-
 export function PosClient({
   storeId,
   products,
 }: {
   storeId: string;
-  products: PosProduct[];
+  products: any[];
 }) {
   const router = useRouter();
   const cart = useCart();
