@@ -77,7 +77,7 @@ export default async function Home() {
           </div>
 
           <h1 className="mb-3 text-4xl font-black tracking-tight drop-shadow-sm">
-            Warungku SaaS
+            WarungKu
           </h1>
 
           <p className="mx-auto max-w-[300px] text-base font-medium leading-relaxed text-white/85">

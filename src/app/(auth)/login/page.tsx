@@ -44,7 +44,7 @@ export default function LoginPage() {
           Selamat Datang Kembali
         </h1>
         <p className="text-sm text-slate-500 mt-1.5">
-          Masuk ke akun Warung SaaS Anda
+          Masuk ke Sistem Anda
         </p>
       </div>
 

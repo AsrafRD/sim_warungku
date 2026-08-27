@@ -518,11 +518,11 @@ export default async function DashboardPage({
 
               <div>
                 <h3 className="font-bold text-slate-800">
-                  Performa Bulan Ini <span> - </span><span className="text-sm font-semibold text-[#FF8F00]">( {monthOrders.length} ) Transaksi</span>
+                  Performa Bulan Ini 
                 </h3>
 
-                <p className="mt-0.5 text-[11px] text-slate-400">
-                  Ringkasan bulan berjalan
+                <p className="text-sm font-semibold text-[#FF8F00]">
+                  ( {monthOrders.length} ) Transaksi
                 </p>
               </div>
             </div>

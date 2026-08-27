@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <Store className="size-5 text-white" />
         </div>
         <span className="text-xl font-bold tracking-tight text-slate-900">
-          Warung SaaS
+          WarungKu
         </span>
       </div>
       <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150 fill-mode-both">

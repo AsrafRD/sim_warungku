@@ -70,7 +70,7 @@ export default async function StoresPage() {
                     </h3>
 
                     <p className="mt-0.5 truncate text-xs text-slate-500">
-                      {store.address || "Warung SaaS"}
+                      {store.address || "WarungKu"}
                     </p>
                   </div>
                 </div>

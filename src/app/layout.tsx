@@ -5,8 +5,8 @@ import { NetworkProvider } from "@/components/providers/network-provider";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Warung SaaS",
-    default: "Warung SaaS — Sistem Informasi & POS",
+    template: "%s | WarungKu",
+    default: "WarungKu — Sistem Informasi & POS",
   },
   description:
     "Sistem Informasi dan Point of Sale (POS) untuk Warung. Multi-tenant, mobile-first, dengan fitur stok opname dan Bluetooth thermal printing.",

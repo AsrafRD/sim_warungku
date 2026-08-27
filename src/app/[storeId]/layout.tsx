@@ -4,7 +4,7 @@ import { validateStoreAccess } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Warung SaaS — Dashboard",
+  title: "WarungKu — Dashboard",
   description: "Sistem Informasi & POS Warung",
 };
 
