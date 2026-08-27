@@ -14,8 +14,11 @@ const checkoutSchema = z.object({
       sellPrice: z.number(),
     })
   ).min(1, "Keranjang tidak boleh kosong"),
-  paymentType: z.enum(["CASH", "QRIS", "TRANSFER"]).default("CASH"),
+  paymentType: z.enum(["CASH", "QRIS", "TRANSFER", "KASBON"]).default("CASH"),
   paidAmount: z.number().min(0),
+  shiftId: z.string().optional(),
+  customerId: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 export async function createOrder(
@@ -37,14 +40,18 @@ export async function createOrder(
       };
     }
 
-    const { items, paymentType, paidAmount } = parsed.data;
+    const { items, paymentType, paidAmount, shiftId, customerId, notes } = parsed.data;
 
     // Calculate totals
     const totalAmount = items.reduce((sum, item) => sum + item.sellPrice * item.quantity, 0);
     const changeAmount = paidAmount >= totalAmount ? paidAmount - totalAmount : 0;
 
-    if (paidAmount < totalAmount) {
+    if (paymentType !== "KASBON" && paidAmount < totalAmount) {
       return { success: false, message: "Uang pembayaran kurang" };
+    }
+
+    if (paymentType === "KASBON" && !customerId) {
+      return { success: false, message: "Pelanggan wajib diisi untuk transaksi KASBON" };
     }
 
     // Generate Invoice No (e.g. INV-20231015-XXXX)
@@ -53,15 +60,17 @@ export async function createOrder(
     const invoiceNo = `INV-${dateStr}-${randomStr}`;
 
     const order = await db.$transaction(async (tx) => {
-      // 1. Create the Order
       const newOrder = await tx.order.create({
         data: {
           storeId: storeDbId,
+          shiftId: shiftId || null,
+          customerId: customerId || null,
           invoiceNo,
           totalAmount,
           paidAmount,
           changeAmount,
           paymentType,
+          notes,
           items: {
             create: items.map(item => ({
               productId: item.productId,
@@ -73,6 +82,17 @@ export async function createOrder(
           }
         }
       });
+
+      // 1.5. Update Customer Debt if applicable
+      if (customerId) {
+        const debtIncrease = totalAmount - paidAmount;
+        if (debtIncrease > 0) {
+          await tx.customer.update({
+            where: { id: customerId },
+            data: { debtBalance: { increment: debtIncrease } }
+          });
+        }
+      }
 
       // 2. Decrement stock and create stock logs
       for (const item of items) {

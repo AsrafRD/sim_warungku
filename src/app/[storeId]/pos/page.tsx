@@ -38,11 +38,41 @@ export default async function PosPage({
     sellPrice: Number(p.sellPrice),
   }));
 
+  const { auth } = await import("@/auth");
+  const session = await auth();
+
+  let activeShift = null;
+  if (session?.user?.id) {
+    const shift = await db.shift.findFirst({
+      where: {
+        storeId: storeDbId,
+        cashierId: session.user.id,
+        status: "OPEN",
+      },
+    });
+
+    if (shift) {
+      activeShift = {
+        ...shift,
+        openingBalance: Number(shift.openingBalance),
+        closingBalance: shift.closingBalance ? Number(shift.closingBalance) : null,
+        expectedBalance: shift.expectedBalance ? Number(shift.expectedBalance) : null,
+      };
+    }
+  }
+
+  const customers = await db.customer.findMany({
+    where: { storeId: storeDbId },
+    orderBy: { name: "asc" },
+  });
+
   return (
     <div className="flex h-full flex-1 flex-col overflow-hidden bg-[#F5F5DC]/40">
       <PosClient
         storeId={storeId}
         products={products as any}
+        activeShift={activeShift}
+        customers={customers.map((c) => ({ ...c, debtBalance: Number(c.debtBalance) }))}
       />
     </div>
   );

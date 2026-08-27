@@ -54,7 +54,10 @@ export const ModelName = {
   User: 'User',
   Store: 'Store',
   Supplier: 'Supplier',
+  Customer: 'Customer',
+  DebtPayment: 'DebtPayment',
   Product: 'Product',
+  Shift: 'Shift',
   Order: 'Order',
   OrderItem: 'OrderItem',
   StockOpname: 'StockOpname',
@@ -123,6 +126,32 @@ export const SupplierScalarFieldEnum = {
 export type SupplierScalarFieldEnum = (typeof SupplierScalarFieldEnum)[keyof typeof SupplierScalarFieldEnum]
 
 
+export const CustomerScalarFieldEnum = {
+  id: 'id',
+  storeId: 'storeId',
+  name: 'name',
+  phone: 'phone',
+  address: 'address',
+  debtBalance: 'debtBalance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
+export const DebtPaymentScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  amount: 'amount',
+  paymentType: 'paymentType',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type DebtPaymentScalarFieldEnum = (typeof DebtPaymentScalarFieldEnum)[keyof typeof DebtPaymentScalarFieldEnum]
+
+
 export const ProductScalarFieldEnum = {
   id: 'id',
   storeId: 'storeId',
@@ -144,14 +173,33 @@ export const ProductScalarFieldEnum = {
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
+export const ShiftScalarFieldEnum = {
+  id: 'id',
+  storeId: 'storeId',
+  cashierId: 'cashierId',
+  openingBalance: 'openingBalance',
+  closingBalance: 'closingBalance',
+  expectedBalance: 'expectedBalance',
+  status: 'status',
+  notes: 'notes',
+  openedAt: 'openedAt',
+  closedAt: 'closedAt'
+} as const
+
+export type ShiftScalarFieldEnum = (typeof ShiftScalarFieldEnum)[keyof typeof ShiftScalarFieldEnum]
+
+
 export const OrderScalarFieldEnum = {
   id: 'id',
   storeId: 'storeId',
+  shiftId: 'shiftId',
+  customerId: 'customerId',
   invoiceNo: 'invoiceNo',
   totalAmount: 'totalAmount',
   paidAmount: 'paidAmount',
   changeAmount: 'changeAmount',
   paymentType: 'paymentType',
+  notes: 'notes',
   createdAt: 'createdAt'
 } as const
 

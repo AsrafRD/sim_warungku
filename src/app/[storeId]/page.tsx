@@ -12,8 +12,11 @@ import {
   Trophy,
   Activity,
   ArrowUpRight,
+  CheckCircle2,
 } from "lucide-react";
 import { DashboardChart } from "@/components/modules/admin/dashboard-chart";
+import Link from "next/link";
+import { auth } from "@/auth";
 
 interface DashboardPageProps {
   params: Promise<{ storeId: string }>;
@@ -26,6 +29,9 @@ export default async function DashboardPage({
 
   const storeDbId = await validateStoreAccess(storeId);
   if (!storeDbId) redirect("/");
+
+  const session = await auth();
+  if (!session?.user?.id) redirect("/login");
 
   // Date ranges
   const now = new Date();
@@ -54,6 +60,10 @@ export default async function DashboardPage({
     lowStockProducts,
     topItemsGroup,
     last7DaysOrders,
+    last7DaysItems,
+    monthItems,
+    activeShift,
+    lastClosedShift,
   ] = await Promise.all([
     db.order.findMany({
       where: {
@@ -113,15 +123,64 @@ export default async function DashboardPage({
         createdAt: true,
       },
     }),
+
+    db.orderItem.findMany({
+      where: {
+        order: {
+          storeId: storeDbId,
+          createdAt: { gte: sevenDaysAgo },
+        }
+      },
+      select: {
+        quantity: true,
+        sellPrice: true,
+        buyPrice: true,
+        order: {
+          select: {
+            createdAt: true,
+          }
+        }
+      }
+    }),
+
+    db.orderItem.findMany({
+      where: {
+        order: {
+          storeId: storeDbId,
+          createdAt: { gte: startOfMonth },
+        }
+      },
+      select: {
+        quantity: true,
+        sellPrice: true,
+        buyPrice: true,
+      }
+    }),
+
+    db.shift.findFirst({
+      where: {
+        storeId: storeDbId,
+        cashierId: session.user.id,
+        status: "OPEN",
+      },
+    }).then(s => s ? { ...s, openingBalance: Number(s.openingBalance), closingBalance: s.closingBalance ? Number(s.closingBalance) : null, expectedBalance: s.expectedBalance ? Number(s.expectedBalance) : null } : null),
+
+    db.shift.findFirst({
+      where: {
+        storeId: storeDbId,
+        status: "CLOSED",
+      },
+      orderBy: { closedAt: "desc" },
+    }).then(s => s ? { ...s, openingBalance: Number(s.openingBalance), closingBalance: s.closingBalance ? Number(s.closingBalance) : null, expectedBalance: s.expectedBalance ? Number(s.expectedBalance) : null } : null),
   ]);
 
-  const todayRevenue = todayOrders.reduce(
+  const monthRevenue = monthOrders.reduce(
     (sum, order) => sum + Number(order.totalAmount),
     0
   );
 
-  const monthRevenue = monthOrders.reduce(
-    (sum, order) => sum + Number(order.totalAmount),
+  const monthProfit = monthItems.reduce(
+    (sum, item) => sum + ((Number(item.sellPrice) - Number(item.buyPrice)) * item.quantity),
     0
   );
 
@@ -175,7 +234,7 @@ export default async function DashboardPage({
   });
 
   // Prepare Chart Data
-  const chartMap = new Map<string, number>();
+  const chartMap = new Map<string, { revenue: number; profit: number }>();
 
   for (let i = 0; i < 7; i++) {
     const d = new Date(
@@ -189,7 +248,7 @@ export default async function DashboardPage({
       day: "numeric",
     });
 
-    chartMap.set(dateStr, 0);
+    chartMap.set(dateStr, { revenue: 0, profit: 0 });
   }
 
   last7DaysOrders.forEach((order) => {
@@ -199,20 +258,47 @@ export default async function DashboardPage({
     });
 
     if (chartMap.has(dateStr)) {
-      chartMap.set(
-        dateStr,
-        chartMap.get(dateStr)! +
-          Number(order.totalAmount)
-      );
+      const data = chartMap.get(dateStr)!;
+      chartMap.set(dateStr, {
+        ...data,
+        revenue: data.revenue + Number(order.totalAmount),
+      });
+    }
+  });
+
+  last7DaysItems.forEach((item) => {
+    const dateStr = item.order.createdAt.toLocaleDateString("id-ID", {
+      weekday: "short",
+      day: "numeric",
+    });
+
+    if (chartMap.has(dateStr)) {
+      const data = chartMap.get(dateStr)!;
+      const sell = Number(item.sellPrice) || 0;
+      const buy = Number(item.buyPrice) || 0;
+      const profit = (sell - buy) * item.quantity;
+      chartMap.set(dateStr, {
+        ...data,
+        profit: data.profit + profit,
+      });
     }
   });
 
   const chartData = Array.from(chartMap.entries()).map(
-    ([date, revenue]) => ({
+    ([date, data]) => ({
       date,
-      revenue,
+      revenue: data.revenue,
+      profit: data.profit,
     })
   );
+
+  // Calculate Shift Variance
+  let shiftVariance = 0;
+  let hasVariance = false;
+  if (lastClosedShift && lastClosedShift.closingBalance && lastClosedShift.expectedBalance) {
+    shiftVariance = Number(lastClosedShift.closingBalance) - Number(lastClosedShift.expectedBalance);
+    hasVariance = true;
+  }
 
   return (
     <>
@@ -231,140 +317,249 @@ export default async function DashboardPage({
         <div className="mx-auto w-full max-w-2xl space-y-4">
 
           {/* ─────────────────────────────────────
-              Welcome Banner
+              Active Shift Alert
+          ───────────────────────────────────── */}
+          {activeShift && (
+            <div className="rounded-2xl bg-orange-50 border border-orange-200 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="bg-orange-100 p-2 rounded-xl text-orange-600 mt-0.5 sm:mt-0">
+                  <Activity className="size-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-orange-800">Shift Kasir Aktif</h3>
+                  <p className="text-xs text-orange-700/80 mt-0.5">
+                    Dibuka sejak: {activeShift.openedAt.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}
+                  </p>
+                </div>
+              </div>
+              <Link 
+                href={`/${storeId}/pos`} 
+                className="bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-orange-700 transition-colors whitespace-nowrap self-stretch sm:self-auto text-center"
+              >
+                Ke Halaman Kasir
+              </Link>
+            </div>
+          )}
+
+          {/* ─────────────────────────────────────
+              Last Shift Variance
+          ───────────────────────────────────── */}
+          {hasVariance && (
+            <div className={`rounded-2xl border p-4 shadow-sm flex items-start gap-3 ${
+              shiftVariance < 0 ? 'bg-red-50 border-red-200' : shiftVariance > 0 ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className={`p-2 rounded-xl ${
+                shiftVariance < 0 ? 'bg-red-100 text-red-600' : shiftVariance > 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-600'
+              }`}>
+                {shiftVariance < 0 ? <AlertCircle className="size-5" /> : <CheckCircle2 className="size-5" />}
+              </div>
+              <div>
+                <h3 className={`font-bold ${
+                  shiftVariance < 0 ? 'text-red-800' : shiftVariance > 0 ? 'text-emerald-800' : 'text-slate-700'
+                }`}>
+                  Evaluasi Kasir Terakhir
+                </h3>
+                <p className={`text-xs mt-0.5 ${
+                  shiftVariance < 0 ? 'text-red-700/80' : shiftVariance > 0 ? 'text-emerald-700/80' : 'text-slate-500'
+                }`}>
+                  {shiftVariance < 0 
+                    ? `Perhatian: Terdapat kekurangan uang/selisih minus sebesar ${formatRupiah(Math.abs(shiftVariance))}.` 
+                    : shiftVariance > 0
+                    ? `Terdapat kelebihan uang laci sebesar ${formatRupiah(shiftVariance)}.`
+                    : 'Uang laci seimbang (balance). Kerja bagus!'}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ─────────────────────────────────────
+              Low Stock
           ───────────────────────────────────── */}
 
           <section
             className="
-              relative
-              overflow-hidden
-              rounded-3xl
-              bg-[#FF8F00]
+              rounded-2xl
+              border border-[#E8DFB5]
+              bg-white
               p-5
-              text-white
-              shadow-[0_10px_30px_rgba(255,143,0,0.22)]
+              shadow-sm
             "
           >
-            {/* Decorative circles */}
-            <div
-              className="
-                absolute
-                -right-10
-                -top-10
-                size-32
-                rounded-full
-                bg-white/10
-              "
-            />
-
-            <div
-              className="
-                absolute
-                -bottom-16
-                right-8
-                size-40
-                rounded-full
-                bg-[#FBC02D]/20
-              "
-            />
-
-            <div className="relative">
-              <div className="mb-3 flex items-center gap-2">
-                <div className="flex size-9 items-center justify-center rounded-xl bg-white/15">
-                  <Activity className="size-5" />
-                </div>
-
-                <span className="text-xs font-semibold uppercase tracking-wider text-white/75">
-                  Dashboard Toko
-                </span>
+            <div className="mb-4 flex items-center gap-3">
+              <div
+                className="
+                  flex size-10
+                  items-center justify-center
+                  rounded-xl
+                  bg-[#FFF0D6]
+                  text-[#E67E00]
+                "
+              >
+                <AlertCircle className="size-[18px]" />
               </div>
 
-              <h2 className="text-xl font-extrabold tracking-tight">
-                Ringkasan Hari Ini
-              </h2>
+              <div>
+                <h3 className="font-bold text-slate-800">
+                  Peringatan Stok Tipis
+                </h3>
 
-              <p className="mt-1 max-w-[300px] text-sm leading-relaxed text-white/80">
-                Pantau penjualan dan kondisi stok toko Anda.
-              </p>
+                <p className="mt-0.5 text-[11px] text-slate-400">
+                  Produk yang perlu segera diperhatikan
+                </p>
+              </div>
             </div>
-          </section>
 
-          {/* ─────────────────────────────────────
-              Today's Stats
-          ───────────────────────────────────── */}
-
-          <section className="grid grid-cols-2 gap-3">
-
-            {/* Transactions */}
-
-            <div
-              className="
-                rounded-2xl
-                border border-[#E8DFB5]
-                bg-white
-                p-4
-                shadow-sm
-              "
-            >
-              <div className="mb-4 flex items-center justify-between">
+            {lowStockProducts.length === 0 ? (
+              <div
+                className="
+                  rounded-xl
+                  border border-dashed
+                  border-[#E8DFB5]
+                  bg-[#FFFCF1]
+                  px-4
+                  py-7
+                  text-center
+                "
+              >
                 <div
                   className="
-                    flex size-9
+                    mx-auto
+                    mb-2
+                    flex size-10
                     items-center justify-center
-                    rounded-xl
+                    rounded-full
                     bg-[#FFF3DD]
                     text-[#FF8F00]
                   "
                 >
-                  <ShoppingBag className="size-[18px]" />
+                  <Package className="size-5" />
                 </div>
 
-                <ArrowUpRight className="size-4 text-slate-300" />
+                <p className="text-sm font-semibold text-slate-600">
+                  Semua stok aman
+                </p>
+
+                <p className="mt-0.5 text-xs text-slate-400">
+                  Tidak ada produk yang perlu direstock.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {lowStockProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="
+                      flex
+                      items-center
+                      justify-between
+                      gap-3
+                      rounded-xl
+                      border
+                      border-[#F1E8C8]
+                      bg-[#FFFCF1]
+                      p-3
+                    "
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-slate-800">
+                        {product.name}
+                      </p>
+
+                      <p className="mt-0.5 text-[10px] font-medium text-slate-400">
+                        Minimum stok: {product.minStockWarning}
+                      </p>
+                    </div>
+
+                    <div
+                      className="
+                        shrink-0
+                        rounded-lg
+                        bg-red-50
+                        px-3
+                        py-1.5
+                        text-xs
+                        font-bold
+                        text-red-600
+                      "
+                    >
+                      Sisa {product.currentStock}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* ─────────────────────────────────────
+              Monthly Summary
+          ───────────────────────────────────── */}
+
+          <section
+            className="
+              rounded-2xl
+              border border-[#E8DFB5]
+              bg-white
+              p-5
+              shadow-sm
+            "
+          >
+            <div className="mb-4 flex items-center gap-3">
+              <div
+                className="
+                  flex size-10
+                  items-center justify-center
+                  rounded-xl
+                  bg-[#FFF8D9]
+                  text-[#D99A00]
+                "
+              >
+                <BarChart3 className="size-[18px]" />
               </div>
 
-              <p className="text-2xl font-black tracking-tight text-slate-800">
-                {todayOrders.length}
-              </p>
+              <div>
+                <h3 className="font-bold text-slate-800">
+                  Performa Bulan Ini <span> - </span><span className="text-sm font-semibold text-[#FF8F00]">( {monthOrders.length} ) Transaksi</span>
+                </h3>
 
-              <p className="mt-0.5 text-xs font-medium text-slate-400">
-                Transaksi hari ini
-              </p>
+                <p className="mt-0.5 text-[11px] text-slate-400">
+                  Ringkasan bulan berjalan
+                </p>
+              </div>
             </div>
 
-            {/* Revenue */}
+            <div className="grid grid-cols-2 gap-3">
 
-            <div
-              className="
-                rounded-2xl
-                border border-[#E8DFB5]
-                bg-white
-                p-4
-                shadow-sm
-              "
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <div
-                  className="
-                    flex size-9
-                    items-center justify-center
-                    rounded-xl
-                    bg-[#FFF8D9]
-                    text-[#D99A00]
-                  "
-                >
-                  <TrendingUp className="size-[18px]" />
-                </div>
-
-                <ArrowUpRight className="size-4 text-slate-300" />
+              <div
+                className="
+                  rounded-xl
+                  border border-[#F1E8C8]
+                  bg-[#FFFCF1]
+                  p-4
+                "
+              >
+                <p className="text-[15px] text-[#FF8F00]">
+                  Total Omset 
+                </p>
+                <p className="truncate text-lg font-black tracking-tight text-[#FF8F00]">
+                  {formatRupiah(monthRevenue)}
+                </p>
               </div>
 
-              <p className="truncate text-lg font-black tracking-tight text-[#FF8F00]">
-                {formatRupiah(todayRevenue)}
-              </p>
-
-              <p className="mt-0.5 text-xs font-medium text-slate-400">
-                Omset hari ini
-              </p>
+              <div
+                className="
+                  rounded-xl
+                  border border-[#F1E8C8]
+                  bg-[#FFFCF1]
+                  p-4
+                "
+              >
+                <p className="text-[15px] text-emerald-600">
+                  Total Laba
+                </p>
+                <p className="truncate text-lg font-black tracking-tight text-emerald-600">
+                  {formatRupiah(monthProfit)}
+                </p>
+              </div>
             </div>
           </section>
 
@@ -406,84 +601,6 @@ export default async function DashboardPage({
             </div>
 
             <DashboardChart data={chartData} />
-          </section>
-
-          {/* ─────────────────────────────────────
-              Monthly Summary
-          ───────────────────────────────────── */}
-
-          <section
-            className="
-              rounded-2xl
-              border border-[#E8DFB5]
-              bg-white
-              p-5
-              shadow-sm
-            "
-          >
-            <div className="mb-4 flex items-center gap-3">
-              <div
-                className="
-                  flex size-10
-                  items-center justify-center
-                  rounded-xl
-                  bg-[#FFF8D9]
-                  text-[#D99A00]
-                "
-              >
-                <BarChart3 className="size-[18px]" />
-              </div>
-
-              <div>
-                <h3 className="font-bold text-slate-800">
-                  Performa Bulan Ini
-                </h3>
-
-                <p className="mt-0.5 text-[11px] text-slate-400">
-                  Ringkasan bulan berjalan
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-
-              <div
-                className="
-                  rounded-xl
-                  border border-[#F1E8C8]
-                  bg-[#FFFCF1]
-                  p-4
-                "
-              >
-                <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Total Omset
-                </p>
-
-                <p className="truncate text-lg font-black text-slate-800">
-                  {formatRupiah(monthRevenue)}
-                </p>
-              </div>
-
-              <div
-                className="
-                  rounded-xl
-                  border border-[#F1E8C8]
-                  bg-[#FFFCF1]
-                  p-4
-                "
-              >
-                <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Transaksi
-                </p>
-
-                <p className="text-lg font-black text-slate-800">
-                  {monthOrders.length}
-                  <span className="ml-1 text-sm font-semibold text-slate-400">
-                    struk
-                  </span>
-                </p>
-              </div>
-            </div>
           </section>
 
           {/* ─────────────────────────────────────
@@ -602,124 +719,6 @@ export default async function DashboardPage({
                 ))
               )}
             </div>
-          </section>
-
-          {/* ─────────────────────────────────────
-              Low Stock
-          ───────────────────────────────────── */}
-
-          <section
-            className="
-              rounded-2xl
-              border border-[#E8DFB5]
-              bg-white
-              p-5
-              shadow-sm
-            "
-          >
-            <div className="mb-4 flex items-center gap-3">
-              <div
-                className="
-                  flex size-10
-                  items-center justify-center
-                  rounded-xl
-                  bg-[#FFF0D6]
-                  text-[#E67E00]
-                "
-              >
-                <AlertCircle className="size-[18px]" />
-              </div>
-
-              <div>
-                <h3 className="font-bold text-slate-800">
-                  Peringatan Stok Tipis
-                </h3>
-
-                <p className="mt-0.5 text-[11px] text-slate-400">
-                  Produk yang perlu segera diperhatikan
-                </p>
-              </div>
-            </div>
-
-            {lowStockProducts.length === 0 ? (
-              <div
-                className="
-                  rounded-xl
-                  border border-dashed
-                  border-[#E8DFB5]
-                  bg-[#FFFCF1]
-                  px-4
-                  py-7
-                  text-center
-                "
-              >
-                <div
-                  className="
-                    mx-auto
-                    mb-2
-                    flex size-10
-                    items-center justify-center
-                    rounded-full
-                    bg-[#FFF3DD]
-                    text-[#FF8F00]
-                  "
-                >
-                  <Package className="size-5" />
-                </div>
-
-                <p className="text-sm font-semibold text-slate-600">
-                  Semua stok aman
-                </p>
-
-                <p className="mt-0.5 text-xs text-slate-400">
-                  Tidak ada produk yang perlu direstock.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {lowStockProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="
-                      flex
-                      items-center
-                      justify-between
-                      gap-3
-                      rounded-xl
-                      border
-                      border-[#F1E8C8]
-                      bg-[#FFFCF1]
-                      p-3
-                    "
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-800">
-                        {product.name}
-                      </p>
-
-                      <p className="mt-0.5 text-[10px] font-medium text-slate-400">
-                        Minimum stok: {product.minStockWarning}
-                      </p>
-                    </div>
-
-                    <div
-                      className="
-                        shrink-0
-                        rounded-lg
-                        bg-red-50
-                        px-3
-                        py-1.5
-                        text-xs
-                        font-bold
-                        text-red-600
-                      "
-                    >
-                      Sisa {product.currentStock}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </section>
 
         </div>

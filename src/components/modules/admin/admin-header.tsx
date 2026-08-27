@@ -82,7 +82,7 @@ export function AdminHeader({
 
       {/* Right */}
 
-      <div className="flex shrink-0 items-center gap-1">
+      {/* <div className="flex shrink-0 items-center gap-1">
         {rightAction ?? (
           <button
             type="button"
@@ -102,7 +102,6 @@ export function AdminHeader({
           >
             <Bell className="size-[19px]" />
 
-            {/* Notification indicator */}
             <span
               className="
                 absolute
@@ -116,7 +115,7 @@ export function AdminHeader({
             />
           </button>
         )}
-      </div>
+      </div> */}
     </header>
   );
 }

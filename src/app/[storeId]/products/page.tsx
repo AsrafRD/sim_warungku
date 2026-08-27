@@ -9,6 +9,7 @@ import { AdminHeader } from "@/components/modules/admin/admin-header";
 import { ProductCard } from "@/components/modules/product/product-card";
 import { ProductSearch } from "@/components/modules/product/product-search";
 import { getProducts } from "@/actions/product.actions";
+import { ProductListClient } from "./product-list-client";
 
 interface ProductsPageProps {
   params: Promise<{ storeId: string }>;
@@ -91,21 +92,14 @@ export default async function ProductsPage({
         ===================================================== */}
 
         <div className="flex-1 overflow-y-auto pb-24">
-
           {products.length > 0 ? (
-
-            <div className="divide-y divide-[#E8DFB5] bg-white">
-
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  storeId={storeId}
-                />
-              ))}
-
-            </div>
-
+            <ProductListClient 
+              key={search || 'default'}
+              storeId={storeId}
+              initialProducts={products}
+              searchQuery={search || ""}
+              initialHasMore={result.data ? result.data.totalPages > 1 : false}
+            />
           ) : (
 
             /* =================================================
@@ -164,7 +158,7 @@ export default async function ProductsPage({
         aria-label="Tambah produk"
         className="
           fixed
-          bottom-20 right-4
+          bottom-25 right-4
           z-50
           flex size-14
           items-center justify-center

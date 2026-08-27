@@ -57,10 +57,25 @@ export type Store = Prisma.StoreModel
  */
 export type Supplier = Prisma.SupplierModel
 /**
+ * Model Customer
+ * 
+ */
+export type Customer = Prisma.CustomerModel
+/**
+ * Model DebtPayment
+ * 
+ */
+export type DebtPayment = Prisma.DebtPaymentModel
+/**
  * Model Product
  * 
  */
 export type Product = Prisma.ProductModel
+/**
+ * Model Shift
+ * 
+ */
+export type Shift = Prisma.ShiftModel
 /**
  * Model Order
  * 

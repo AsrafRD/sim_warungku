@@ -30,10 +30,19 @@ export type StockOpnameStatus = (typeof StockOpnameStatus)[keyof typeof StockOpn
 export const PaymentType = {
   CASH: 'CASH',
   QRIS: 'QRIS',
-  TRANSFER: 'TRANSFER'
+  TRANSFER: 'TRANSFER',
+  KASBON: 'KASBON'
 } as const
 
 export type PaymentType = (typeof PaymentType)[keyof typeof PaymentType]
+
+
+export const ShiftStatus = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED'
+} as const
+
+export type ShiftStatus = (typeof ShiftStatus)[keyof typeof ShiftStatus]
 
 
 export const StockTransactionType = {

@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   ClipboardList,
   UserCircle,
+  Users,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -38,6 +39,11 @@ const navItems: NavItem[] = [
     label: "Order",
     icon: ClipboardList,
     href: "/orders",
+  },
+  {
+    label: "Pelanggan",
+    icon: Users,
+    href: "/customers",
   },
   {
     label: "Profil",

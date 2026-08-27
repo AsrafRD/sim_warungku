@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Building2, Phone, Mail, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -33,7 +33,7 @@ export function SupplierClient({ storeId }: { storeId: string }) {
 
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSuppliers = async () => {
+  const fetchSuppliers = useCallback(async () => {
     try {
       setIsLoading(true);
       const res = await fetch(`/api/suppliers?storeId=${storeId}`);
@@ -46,11 +46,39 @@ export function SupplierClient({ storeId }: { storeId: string }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [storeId]);
 
   useEffect(() => {
-    fetchSuppliers();
+    let mounted = true;
+    (async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/suppliers?storeId=${storeId}`);
+        const data = await res.json();
+        if (mounted && data.success) {
+          setSuppliers(data.data);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    })();
+    return () => { mounted = false };
   }, [storeId]);
+
+  const fetchSuppliersWrapper = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/suppliers?storeId=${storeId}`);
+      const data = await res.json();
+      if (data.success) {
+        setSuppliers(data.data);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleAddSupplier = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +108,7 @@ export function SupplierClient({ storeId }: { storeId: string }) {
       if (data.success) {
         setIsAddModalOpen(false);
         resetForm();
-        fetchSuppliers();
+        fetchSuppliersWrapper();
       } else {
         setError(data.message || "Gagal menambahkan supplier");
       }

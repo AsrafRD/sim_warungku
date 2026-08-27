@@ -15,7 +15,7 @@ import { formatRupiah } from "@/lib/format";
 export function DashboardChart({
   data,
 }: {
-  data: { date: string; revenue: number }[];
+  data: { date: string; revenue: number; profit: number }[];
 }) {
   return (
     <div className="w-full h-[250px] mt-2">
@@ -77,9 +77,9 @@ export function DashboardChart({
               fontSize: "12px",
               fontWeight: 600,
             }}
-            formatter={(value) => [
+            formatter={(value, name) => [
               formatRupiah(Number(value)),
-              "Omset",
+              name === "revenue" ? "Omset" : "Laba"
             ]}
             labelStyle={{
               color: "#64748b",
@@ -89,22 +89,19 @@ export function DashboardChart({
 
           <Bar
             dataKey="revenue"
-            radius={[6, 6, 0, 0]}
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
+            animationDuration={700}
+            fill="#FF8F00"
+          />
+
+          <Bar
+            dataKey="profit"
+            radius={[4, 4, 0, 0]}
             maxBarSize={40}
             animationDuration={700}
             fill="#10b981"
-          >
-            {data.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={
-                  entry.revenue > 0
-                    ? "#b94510ff"
-                    : "#e2e8f0"
-                }
-              />
-            ))}
-          </Bar>
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

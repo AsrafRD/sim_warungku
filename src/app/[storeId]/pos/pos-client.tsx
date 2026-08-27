@@ -23,15 +23,20 @@ import { formatRupiah } from "@/lib/format";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { openShift } from "@/actions/shift.actions";
 
 import type { Product } from "@/generated/prisma/client";
 
 export function PosClient({
   storeId,
   products,
+  activeShift,
+  customers = [],
 }: {
   storeId: string;
   products: any[];
+  activeShift?: any;
+  customers?: any[];
 }) {
   const router = useRouter();
   const cart = useCart();
@@ -40,18 +45,32 @@ export function PosClient({
   const [isPending, startTransition] = useTransition();
 
   const [paymentType, setPaymentType] = useState<
-    "CASH" | "QRIS" | "TRANSFER"
+    "CASH" | "QRIS" | "KASBON"
   >("CASH");
 
   const [paidAmount, setPaidAmount] = useState("");
   const [error, setError] = useState("");
+  const [notes, setNotes] = useState("");
+  const [isAddingNote, setIsAddingNote] = useState(false);
+  const [customerId, setCustomerId] = useState("");
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [successInvoice, setSuccessInvoice] = useState<string | null>(null);
 
+  const [openingBalance, setOpeningBalance] = useState("");
+  const [isOpeningShift, setIsOpeningShift] = useState(false);
+
   if (cart.items.length === 0 && isCartOpen) {
     setIsCartOpen(false);
   }
+
+  const handleOpenShift = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!openingBalance) return;
+    setIsOpeningShift(true);
+    await openShift(storeId, Number(openingBalance));
+    setIsOpeningShift(false);
+  };
 
   const filteredProducts = products.filter((product) => {
     const keyword = search.toLowerCase();
@@ -72,8 +91,13 @@ export function PosClient({
   const handleCheckout = () => {
     if (cart.items.length === 0) return;
 
-    if (Number(paidAmount) < total) {
+    if (paymentType !== "KASBON" && Number(paidAmount) < total) {
       setError("Uang pembayaran kurang!");
+      return;
+    }
+
+    if (paymentType === "KASBON" && !customerId) {
+      setError("Pelanggan harus dipilih untuk kasbon!");
       return;
     }
 
@@ -82,7 +106,10 @@ export function PosClient({
     startTransition(async () => {
       const result = await createOrder(storeId, {
         paymentType,
-        paidAmount: Number(paidAmount),
+        shiftId: activeShift?.id,
+        customerId: customerId || undefined,
+        notes: notes || undefined,
+        paidAmount: paymentType === "KASBON" ? 0 : Number(paidAmount),
         items: cart.items.map((item) => ({
           productId: item.product.id,
           quantity: item.quantity,
@@ -94,6 +121,9 @@ export function PosClient({
       if (result.success) {
         cart.clearCart();
         setPaidAmount("");
+        setNotes("");
+        setIsAddingNote(false);
+        setCustomerId("");
         setIsCartOpen(false);
 
         setSuccessInvoice(
@@ -111,16 +141,51 @@ export function PosClient({
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden lg:flex-row">
+      {/* SHIFT MODAL */}
+      {!activeShift && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+            <div className="mb-6 text-center">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-[#FFF0D6] text-[#FF8F00]">
+                <Banknote className="size-7" />
+              </div>
+              <h2 className="text-xl font-bold text-slate-800">Buka Shift Kasir</h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Masukkan saldo awal kas (laci kasir) sebelum mulai bertransaksi.
+              </p>
+            </div>
+            <form onSubmit={handleOpenShift} className="space-y-4">
+              <div>
+                <Label>Saldo Awal Laci (Rp)</Label>
+                <Input
+                  type="number"
+                  value={openingBalance}
+                  onChange={(e) => setOpeningBalance(e.target.value)}
+                  placeholder="Contoh: 100000"
+                  required
+                  className="mt-1 h-12 rounded-xl text-lg font-bold"
+                />
+              </div>
+              <Button
+                type="submit"
+                disabled={isOpeningShift || !openingBalance}
+                className="h-12 w-full rounded-xl bg-[#FF8F00] text-base font-bold text-white hover:bg-[#e68100]"
+              >
+                {isOpeningShift ? <Loader2 className="mr-2 animate-spin" /> : "Mulai Shift"}
+              </Button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* =====================================================
           PRODUCT CATALOG
       ===================================================== */}
       <div className="flex-1 overflow-y-auto bg-[#F5F5DC]/40 pb-24 lg:border-r lg:border-[#E8DFB5] lg:pb-0">
 
-        {/* Search */}
-        <div className="sticky top-0 z-10 border-b border-[#E8DFB5] bg-white/95 p-3 backdrop-blur lg:static lg:p-4">
-
-          <div className="relative">
+        {/* Search & Shift Controls */}
+        <div className="sticky top-0 z-10 border-b border-[#E8DFB5] bg-white/95 p-3 backdrop-blur lg:static lg:p-4 flex gap-3 items-center">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400 lg:size-5" />
 
             <Input
@@ -130,6 +195,15 @@ export function PosClient({
               className="h-11 rounded-xl border-[#E8DFB5] bg-[#F5F5DC]/50 pl-9 text-sm placeholder:text-slate-400 focus-visible:border-[#FF8F00] focus-visible:ring-[#FF8F00]/20 lg:h-12 lg:pl-10 lg:text-base"
             />
           </div>
+          {activeShift && (
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/${storeId}/shift/close`)}
+              className="h-11 lg:h-12 rounded-xl border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 font-semibold"
+            >
+              Tutup Shift
+            </Button>
+          )}
         </div>
 
         {/* Catalog */}
@@ -497,57 +571,110 @@ export function PosClient({
               />
 
               <PaymentButton
-                active={paymentType === "TRANSFER"}
-                onClick={() => setPaymentType("TRANSFER")}
-                icon={CreditCard}
-                label="TRANSFER"
+                active={paymentType === "KASBON"}
+                onClick={() => setPaymentType("KASBON")}
+                icon={Banknote}
+                label="KASBON"
               />
 
             </div>
+          </div>
+
+          {/* Customer Selection if KASBON */}
+          {paymentType === "KASBON" && (
+            <div className="mt-3 space-y-1.5">
+              <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                Pilih Pelanggan
+              </Label>
+              <select
+                value={customerId}
+                onChange={(e) => setCustomerId(e.target.value)}
+                className="w-full h-11 rounded-xl border border-[#E8DFB5] bg-[#F5F5DC]/40 px-3 text-sm focus:border-[#FF8F00] focus:ring-[#FF8F00]/20"
+              >
+                <option value="">-- Pilih Pelanggan --</option>
+                {customers.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Notes */}
+          <div className="mt-3 space-y-1.5">
+            {!isAddingNote ? (
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => setIsAddingNote(true)}
+                className="h-8 w-full border border-dashed border-[#E8DFB5] text-xs text-slate-400 hover:bg-[#F5F5DC]/40 hover:text-[#FF8F00]"
+              >
+                + Tambah Catatan Transaksi
+              </Button>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Catatan (Opsional)
+                  </Label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAddingNote(false);
+                      setNotes("");
+                    }}
+                    className="text-[10px] font-bold text-red-400 hover:text-red-500"
+                  >
+                    Hapus
+                  </button>
+                </div>
+                <Input
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Cth: Hutang lunas minggu depan"
+                  className="h-11 rounded-xl border-[#E8DFB5] bg-[#F5F5DC]/40 text-sm focus-visible:border-[#FF8F00]"
+                  autoFocus
+                />
+              </>
+            )}
           </div>
 
           {/* Paid Amount */}
-          <div className="mt-3 space-y-1.5">
+          {paymentType !== "KASBON" && (
+            <>
+              <div className="mt-3 space-y-1.5">
+                <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Nominal Bayar
+                </Label>
 
-            <Label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Nominal Bayar
-            </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">
+                    Rp
+                  </span>
 
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">
-                Rp
-              </span>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={paidAmount}
+                    onChange={(e) => {
+                      setPaidAmount(e.target.value);
+                      setError("");
+                    }}
+                    className="h-12 rounded-xl border-[#E8DFB5] bg-[#F5F5DC]/40 pl-9 text-lg font-black focus-visible:border-[#FF8F00] focus-visible:ring-[#FF8F00]/20"
+                  />
+                </div>
+              </div>
 
-              <Input
-                type="number"
-                placeholder="0"
-                value={paidAmount}
-                onChange={(e) => {
-                  setPaidAmount(e.target.value);
-                  setError("");
-                }}
-                className="h-12 rounded-xl border-[#E8DFB5] bg-[#F5F5DC]/40 pl-9 text-lg font-black focus-visible:border-[#FF8F00] focus-visible:ring-[#FF8F00]/20"
-              />
-            </div>
-          </div>
-
-          {/* Change */}
-          <div className="mb-3 mt-2 flex items-center justify-between px-1 lg:mb-4">
-
-            <span className="text-xs font-medium text-slate-500">
-              Kembalian
-            </span>
-
-            <span
-              className={`text-sm font-black ${
-                change > 0
-                  ? "text-emerald-600"
-                  : "text-slate-400"
-              }`}
-            >
-              {formatRupiah(change)}
-            </span>
-          </div>
+              {/* Change */}
+              <div className="mb-3 mt-2 flex items-center justify-between px-1 lg:mb-4">
+                <span className="text-xs font-medium text-slate-500">
+                  Kembalian
+                </span>
+                <span className={`text-sm font-black ${change > 0 ? "text-emerald-600" : "text-slate-400"}`}>
+                  {formatRupiah(change)}
+                </span>
+              </div>
+            </>
+          )}
 
           {/* Checkout Button */}
           <Button

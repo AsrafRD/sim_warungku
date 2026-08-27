@@ -27,6 +27,12 @@ enum PaymentType {
   CASH
   QRIS
   TRANSFER
+  KASBON
+}
+
+enum ShiftStatus {
+  OPEN
+  CLOSED
 }
 
 enum StockTransactionType {
@@ -52,6 +58,7 @@ model User {
   ownedStores      Store[]       @relation("StoreOwner")
   performedOpnames StockOpname[]
   supplierProfiles Supplier[]
+  performedShifts  Shift[]
 
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
@@ -72,6 +79,8 @@ model Store {
   orders       Order[]
   stockOpnames StockOpname[]
   stockLogs    StockLog[]
+  shifts       Shift[]
+  customers    Customer[]
   categories   Category[]
   units        Unit[]
 
@@ -102,6 +111,42 @@ model Supplier {
   updatedAt   DateTime  @updatedAt
   
   @@index([storeId])
+}
+
+// ------------------------------------------------------
+// CUSTOMER & PIUTANG
+// ------------------------------------------------------
+
+model Customer {
+  id           String        @id @default(uuid())
+  storeId      String
+  name         String
+  phone        String?
+  address      String?
+  debtBalance  Decimal       @db.Decimal(12, 2) @default(0)
+  
+  store        Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  orders       Order[]
+  debtPayments DebtPayment[]
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([storeId])
+}
+
+model DebtPayment {
+  id          String      @id @default(uuid())
+  customerId  String
+  amount      Decimal     @db.Decimal(12, 2)
+  paymentType PaymentType @default(CASH)
+  notes       String?
+  
+  customer    Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
+
+  @@index([customerId])
 }
 
 // ------------------------------------------------------
@@ -141,24 +186,56 @@ model Product {
 }
 
 // ------------------------------------------------------
+// SHIFT & KASIR
+// ------------------------------------------------------
+
+model Shift {
+  id             String      @id @default(uuid())
+  storeId        String
+  cashierId      String
+  openingBalance Decimal     @db.Decimal(12, 2) @default(0)
+  closingBalance Decimal?    @db.Decimal(12, 2)
+  expectedBalance Decimal?   @db.Decimal(12, 2)
+  status         ShiftStatus @default(OPEN)
+  notes          String?
+  
+  openedAt       DateTime    @default(now())
+  closedAt       DateTime?
+
+  store          Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  cashier        User        @relation(fields: [cashierId], references: [id])
+  orders         Order[]
+
+  @@index([storeId])
+  @@index([cashierId])
+}
+
+// ------------------------------------------------------
 // POS / TRANSAKSI PENJUALAN
 // ------------------------------------------------------
 
 model Order {
   id           String      @id @default(uuid())
   storeId      String
+  shiftId      String?
+  customerId   String?
   invoiceNo    String      @unique
   totalAmount  Decimal     @db.Decimal(12, 2)
   paidAmount   Decimal     @db.Decimal(12, 2)
   changeAmount Decimal     @db.Decimal(12, 2) @default(0)
   paymentType  PaymentType @default(CASH)
+  notes        String?
   
   store        Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  shift        Shift?      @relation(fields: [shiftId], references: [id], onDelete: SetNull)
+  customer     Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
   items        OrderItem[]
 
   createdAt    DateTime    @default(now())
 
   @@index([storeId])
+  @@index([shiftId])
+  @@index([customerId])
   @@index([createdAt])
 }
 

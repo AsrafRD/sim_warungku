@@ -82,7 +82,11 @@ export async function getProducts(
     return {
       success: true,
       data: {
-        products,
+        products: products.map(p => ({
+          ...p,
+          buyPrice: Number(p.buyPrice),
+          sellPrice: Number(p.sellPrice),
+        })) as any,
         total,
         page,
         totalPages: Math.ceil(total / limit),

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NextTopLoader from 'nextjs-toploader';
+import { NetworkProvider } from "@/components/providers/network-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   },
   description:
     "Sistem Informasi dan Point of Sale (POS) untuk Warung. Multi-tenant, mobile-first, dengan fitur stok opname dan Bluetooth thermal printing.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -24,7 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           height={5}
           shadow="0 0 10px #e91f04ff,0 0 5px #9c1700ff"
         />
-        {children}
+        <NetworkProvider>
+          {children}
+        </NetworkProvider>
       </body>
     </html>
   );

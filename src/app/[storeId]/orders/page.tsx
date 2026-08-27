@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { AdminHeader } from "@/components/modules/admin/admin-header";
 import { Receipt, ShoppingBag } from "lucide-react";
 
-import { OrderCard } from "@/components/modules/order/order-card";
+import { OrderListClient } from "./order-list-client";
 
 export default async function OrdersPage({
   params,
@@ -30,7 +30,11 @@ export default async function OrdersPage({
         },
       },
     },
-    take: 50,
+    take: 20,
+  });
+  
+  const totalOrders = await db.order.count({
+    where: { storeId: storeDbId }
   });
 
   const orders = rawOrders.map((order) => ({
@@ -75,30 +79,11 @@ export default async function OrdersPage({
           </div>
 
           {/* Orders */}
-          {orders.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[#E8DFB5] bg-white px-6 py-14 text-center shadow-sm">
-              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-[#F5F5DC] text-[#C8B96B]">
-                <ShoppingBag className="size-7" />
-              </div>
-
-              <h3 className="font-bold text-slate-800">
-                Belum ada transaksi
-              </h3>
-
-              <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-slate-400">
-                Transaksi yang berhasil dilakukan akan muncul di halaman ini.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {orders.map((order) => (
-                <OrderCard
-                  key={order.id}
-                  order={order as any}
-                />
-              ))}
-            </div>
-          )}
+          <OrderListClient 
+            storeId={storeId} 
+            initialOrders={orders}
+            initialHasMore={orders.length < totalOrders}
+          />
 
         </div>
       </main>
