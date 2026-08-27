@@ -152,7 +152,7 @@ export function CustomerClient({ storeId, initialCustomers, totalPiutang }: Cust
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
           <span className="text-sm font-medium text-slate-500">Total Piutang (Belum Dibayar)</span>
-          <span className="text-3xl font-black text-[#C62828] mt-2">{formatRupiah(totalPiutang)}</span>
+          <span className="text-2xl font-black text-[#C62828] mt-2">{formatRupiah(totalPiutang)}</span>
         </div>
       </div>
 
@@ -173,9 +173,8 @@ export function CustomerClient({ storeId, initialCustomers, totalPiutang }: Cust
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="px-6 py-4 font-medium">Nama Pelanggan</th>
-                <th className="px-6 py-4 font-medium">Telepon</th>
-                <th className="px-6 py-4 font-medium text-right">Total Utang (Kasbon)</th>
+                <th className="px-6 py-4 font-medium">Nama</th>
+                <th className="px-6 py-4 font-medium text-right">Total</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -193,7 +192,6 @@ export function CustomerClient({ storeId, initialCustomers, totalPiutang }: Cust
                     onClick={() => handleOpenPayment(c)}
                   >
                     <td className="px-6 py-4 font-medium text-slate-800">{c.name}</td>
-                    <td className="px-6 py-4 text-slate-600">{c.phone || "-"}</td>
                     <td className="px-6 py-4 text-right">
                       <span className={`font-bold ${c.debtBalance > 0 ? 'text-[#C62828]' : 'text-emerald-600'}`}>
                         {formatRupiah(c.debtBalance)}

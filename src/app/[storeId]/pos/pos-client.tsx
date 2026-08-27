@@ -57,6 +57,7 @@ export function PosClient({
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [successInvoice, setSuccessInvoice] = useState<string | null>(null);
 
+  const [showShiftModal, setShowShiftModal] = useState(!activeShift);
   const [openingBalance, setOpeningBalance] = useState("");
   const [isOpeningShift, setIsOpeningShift] = useState(false);
 
@@ -89,6 +90,11 @@ export function PosClient({
       : 0;
 
   const handleCheckout = () => {
+    if (!activeShift) {
+      setShowShiftModal(true);
+      return;
+    }
+
     if (cart.items.length === 0) return;
 
     if (paymentType !== "KASBON" && Number(paidAmount) < total) {
@@ -142,8 +148,8 @@ export function PosClient({
   return (
     <div className="relative flex h-full flex-col overflow-hidden lg:flex-row">
       {/* SHIFT MODAL */}
-      {!activeShift && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      {showShiftModal && !activeShift && (
+        <div className="absolute inset-0 z-[50] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
             <div className="mb-6 text-center">
               <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-[#FFF0D6] text-[#FF8F00]">
@@ -166,13 +172,23 @@ export function PosClient({
                   className="mt-1 h-12 rounded-xl text-lg font-bold"
                 />
               </div>
-              <Button
-                type="submit"
-                disabled={isOpeningShift || !openingBalance}
-                className="h-12 w-full rounded-xl bg-[#FF8F00] text-base font-bold text-white hover:bg-[#e68100]"
-              >
-                {isOpeningShift ? <Loader2 className="mr-2 animate-spin" /> : "Mulai Shift"}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowShiftModal(false)}
+                  className="h-12 w-full rounded-xl text-base font-bold"
+                >
+                  Nanti Saja
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isOpeningShift || !openingBalance}
+                  className="h-12 w-full rounded-xl bg-[#FF8F00] text-base font-bold text-white hover:bg-[#e68100]"
+                >
+                  {isOpeningShift ? <Loader2 className="mr-2 animate-spin" /> : "Mulai Shift"}
+                </Button>
+              </div>
             </form>
           </div>
         </div>
@@ -195,13 +211,20 @@ export function PosClient({
               className="h-11 rounded-xl border-[#E8DFB5] bg-[#F5F5DC]/50 pl-9 text-sm placeholder:text-slate-400 focus-visible:border-[#FF8F00] focus-visible:ring-[#FF8F00]/20 lg:h-12 lg:pl-10 lg:text-base"
             />
           </div>
-          {activeShift && (
+          {activeShift ? (
             <Button
               variant="outline"
               onClick={() => router.push(`/${storeId}/shift/close`)}
               className="h-11 lg:h-12 rounded-xl border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 font-semibold"
             >
               Tutup Shift
+            </Button>
+          ) : (
+            <Button
+              onClick={() => setShowShiftModal(true)}
+              className="h-11 lg:h-12 rounded-xl bg-[#FF8F00] text-white hover:bg-[#e68100] font-semibold"
+            >
+              Buka Shift
             </Button>
           )}
         </div>
@@ -292,21 +315,15 @@ export function PosClient({
                     </h3>
 
                     {/* Price / Stock */}
-                    <div className="mt-2 flex w-full items-end justify-between gap-2">
-
-                      <div className="min-w-0">
-                        <span className="block truncate text-xs font-black text-[#FF8F00] lg:text-sm">
-                          {formatRupiah(
-                            Number(product.sellPrice)
-                          )}
-                        </span>
-
-                        <span className="text-[9px] text-slate-400 lg:text-[10px]">
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="block truncate text-xs font-black text-[#FF8F00] lg:text-sm">
+                        {formatRupiah(
+                          Number(product.sellPrice)
+                        )}<span className="ml-1 text-[10px] text-slate-400">
                           / {product.unit?.name || "PCS"}
                         </span>
                       </div>
-
-                      <span
+                      <div
                         className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-bold lg:text-[10px] ${
                           isLowStock
                             ? "bg-red-50 text-[#C62828]"
@@ -314,9 +331,8 @@ export function PosClient({
                         }`}
                       >
                         {product.currentStock}
-                      </span>
+                      </div>
                     </div>
-
                   </button>
                 );
               })}
@@ -446,9 +462,7 @@ export function PosClient({
                     <p className="mt-0.5 text-xs font-medium text-slate-500">
                       {formatRupiah(
                         Number(item.product.sellPrice)
-                      )}
-
-                      <span className="ml-1 text-[10px] text-slate-400">
+                      )}<span className="ml-1 text-[10px] text-slate-400">
                         / {item.product.unit?.name || "PCS"}
                       </span>
                     </p>

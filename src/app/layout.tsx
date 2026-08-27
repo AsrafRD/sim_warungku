@@ -11,6 +11,14 @@ export const metadata: Metadata = {
   description:
     "Sistem Informasi dan Point of Sale (POS) untuk Warung. Multi-tenant, mobile-first, dengan fitur stok opname dan Bluetooth thermal printing.",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Warung POS",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
