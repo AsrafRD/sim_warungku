@@ -290,7 +290,7 @@ export function ProductForm({
         <FormSection
           icon={<ImageIcon className="size-4" />}
           title="Foto Produk (Opsional)"
-          description="Tambahkan gambar agar produk mudah dikenali"
+          description="Tambahkan gambar produk"
         >
           <div className="space-y-3">
             {imageUrl ? (
