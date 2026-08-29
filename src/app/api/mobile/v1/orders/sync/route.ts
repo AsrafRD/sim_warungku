@@ -93,7 +93,7 @@ export async function POST(req: Request) {
               await tx.customer.update({
                 where: { id: payload.customerId },
                 data: {
-                  totalPiutang: {
+                  debtBalance: {
                     increment: payload.totalAmount
                   }
                 }

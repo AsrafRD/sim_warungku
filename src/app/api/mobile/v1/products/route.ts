@@ -104,7 +104,7 @@ export async function POST(req: Request) {
         currentStock: Number(currentStock || 0),
         minStockWarning: Number(minStockWarning || 0),
         supplierId: supplierId || undefined,
-        image: image || undefined,
+        imageUrl: image || undefined,
       }
     });
 
