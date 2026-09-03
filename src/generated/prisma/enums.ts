@@ -54,3 +54,26 @@ export const StockTransactionType = {
 } as const
 
 export type StockTransactionType = (typeof StockTransactionType)[keyof typeof StockTransactionType]
+
+
+export const SubscriptionStatus = {
+  TRIAL: 'TRIAL',
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
+
+export const SubscriptionPlan = {
+  TRIAL: 'TRIAL',
+  MOBILE_MONTHLY: 'MOBILE_MONTHLY',
+  MOBILE_YEARLY: 'MOBILE_YEARLY',
+  COMBO_MONTHLY: 'COMBO_MONTHLY',
+  COMBO_YEARLY: 'COMBO_YEARLY',
+  MONTHLY: 'MONTHLY',
+  YEARLY: 'YEARLY'
+} as const
+
+export type SubscriptionPlan = (typeof SubscriptionPlan)[keyof typeof SubscriptionPlan]

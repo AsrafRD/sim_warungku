@@ -16,6 +16,15 @@ export default async function PosPage({
     redirect("/");
   }
 
+  // Cek hak akses web POS
+  const sub = await db.subscription.findUnique({
+    where: { storeId: storeDbId },
+  });
+
+  if (!sub?.hasWebAccess) {
+    redirect(`/${storeId}`);
+  }
+
   const rawProducts = await db.product.findMany({
     where: {
       storeId: storeDbId,

@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { DashboardChart } from "@/components/modules/admin/dashboard-chart";
+import { BillingReminderBanner } from "@/components/modules/subscription/billing-reminder-banner";
 import Link from "next/link";
 import { auth } from "@/auth";
 
@@ -64,6 +65,7 @@ export default async function DashboardPage({
     monthItems,
     activeShift,
     lastClosedShift,
+    storeInfo,
   ] = await Promise.all([
     db.order.findMany({
       where: {
@@ -172,6 +174,11 @@ export default async function DashboardPage({
       },
       orderBy: { closedAt: "desc" },
     }).then(s => s ? { ...s, openingBalance: Number(s.openingBalance), closingBalance: s.closingBalance ? Number(s.closingBalance) : null, expectedBalance: s.expectedBalance ? Number(s.expectedBalance) : null } : null),
+
+    db.store.findUnique({
+      where: { id: storeDbId },
+      include: { subscription: true },
+    }),
   ]);
 
   const monthRevenue = monthOrders.reduce(
@@ -315,6 +322,19 @@ export default async function DashboardPage({
         "
       >
         <div className="mx-auto w-full max-w-2xl space-y-4">
+
+          {/* Billing & Subscription Expiry Reminder / Upgrade Card */}
+          {storeInfo?.subscription && (
+            <BillingReminderBanner
+              storeId={storeInfo.id}
+              storeName={storeInfo.name}
+              status={storeInfo.subscription.status}
+              plan={storeInfo.subscription.plan}
+              hasWebAccess={storeInfo.subscription.hasWebAccess}
+              trialEndsAt={storeInfo.subscription.trialEndsAt ? storeInfo.subscription.trialEndsAt.toISOString() : null}
+              currentPeriodEnd={storeInfo.subscription.currentPeriodEnd ? storeInfo.subscription.currentPeriodEnd.toISOString() : null}
+            />
+          )}
 
           {/* ─────────────────────────────────────
               Active Shift Alert

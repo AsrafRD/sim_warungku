@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BottomNav } from "@/components/modules/admin/bottom-nav";
 import { validateStoreAccess } from "@/lib/auth";
+import { db } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -24,6 +25,12 @@ export default async function StoreLayout({
     redirect("/");
   }
 
+  // Ambil status lisensi paket (apakah memiliki akses web combo atau mobile-only)
+  const sub = await db.subscription.findUnique({
+    where: { storeId: hasAccess },
+  });
+  const hasWebAccess = sub?.hasWebAccess ?? false;
+
   return (
     <div className="h-[100dvh] w-full relative overflow-hidden flex flex-col bg-slate-50">
       {/* Main content area — strictly bounded to screen minus BottomNav (72px) on mobile */}
@@ -32,7 +39,7 @@ export default async function StoreLayout({
       </main>
 
       {/* Fixed bottom navigation */}
-      <BottomNav />
+      <BottomNav hasWebAccess={hasWebAccess} />
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { AuthError } from "next-auth";
 import { signIn } from "@/auth";
 import { db } from "@/lib/prisma";
 import type { ActionResponse } from "@/lib/types/action-response";
@@ -72,14 +73,18 @@ export async function loginAction(
       };
     }
 
-    const result = await signIn("credentials", {
-      email: parsed.data.email,
-      password: parsed.data.password,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      return { success: false, message: "Email atau password salah" };
+    try {
+      await signIn("credentials", {
+        email: parsed.data.email,
+        password: parsed.data.password,
+        redirect: false,
+      });
+    } catch (authErr) {
+      if (authErr instanceof AuthError) {
+        return { success: false, message: "Email atau password salah" };
+      }
+      // Re-throw if it's Next.js redirect
+      throw authErr;
     }
 
     // Determine redirect URL

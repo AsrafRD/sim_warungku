@@ -1,21 +1,35 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useTransition, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginAction } from "@/actions/auth.actions";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [isClientApp, setIsClientApp] = useState(false);
+
+  useEffect(() => {
+    // Deteksi jika dibuka dari PWA standalone atau aplikasi kasir terinstal
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+    const isClientParam = searchParams.get("client") === "app";
+
+    if (isStandalone || isClientParam) {
+      setIsClientApp(true);
+    }
+  }, [searchParams]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,9 +38,8 @@ export default function LoginPage() {
 
     startTransition(async () => {
       const result = await loginAction({ email, password });
-      
+
       if (result.success) {
-        // Force refresh to update server components with new session
         router.push(result.redirectUrl || "/");
         router.refresh();
       } else if (result.errors) {
@@ -44,7 +57,7 @@ export default function LoginPage() {
           Selamat Datang Kembali
         </h1>
         <p className="text-sm text-slate-500 mt-1.5">
-          Masuk ke Sistem Anda
+          {isClientApp ? "Masuk ke Aplikasi Kasir" : "Masuk ke Sistem WarungKu"}
         </p>
       </div>
 
@@ -65,6 +78,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             className="h-12 rounded-xl"
             disabled={isPending}
+            autoComplete="email"
           />
           {fieldErrors.email && (
             <p className="text-xs text-red-500">{fieldErrors.email[0]}</p>
@@ -83,6 +97,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             className="h-12 rounded-xl"
             disabled={isPending}
+            autoComplete="current-password"
           />
           {fieldErrors.password && (
             <p className="text-xs text-red-500">{fieldErrors.password[0]}</p>
@@ -107,15 +122,45 @@ export default function LoginPage() {
         </div>
       </form>
 
-      <div className="mt-8 text-center text-sm text-slate-500">
-        Belum punya akun?{" "}
-        <Link
-          href="/register"
-          className="font-semibold text-[#FF8F00] hover:text-[#e68100]"
-        >
-          Daftar sekarang
-        </Link>
-      </div>
+      {/* Conditional Gatekeeping: Hide register link on installed client apps */}
+      {isClientApp ? (
+        <div className="mt-7 rounded-2xl bg-amber-50/80 border border-amber-200/70 p-4 text-center">
+          <div className="flex items-center justify-center gap-1.5 text-amber-800 font-bold text-xs mb-1">
+            <ShieldCheck className="size-4 text-amber-600" />
+            Aplikasi Kasir Terpasang
+          </div>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Belum punya lisensi atau akun toko? Registrasi & pembelian lisensi hanya melalui website resmi.
+          </p>
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2.5 inline-flex items-center gap-1 text-xs font-bold text-[#FF8F00] hover:underline"
+          >
+            <Globe className="size-3.5" />
+            Buka Website Resmi WarungKu
+          </a>
+        </div>
+      ) : (
+        <div className="mt-8 text-center text-sm text-slate-500">
+          Belum punya akun?{" "}
+          <Link
+            href="/register"
+            className="font-semibold text-[#FF8F00] hover:text-[#e68100]"
+          >
+            Daftar sekarang
+          </Link>
+        </div>
+      )}
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-sm text-slate-400">Memuat halaman login...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

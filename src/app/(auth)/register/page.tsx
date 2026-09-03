@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Store, Truck } from "lucide-react";
@@ -17,6 +17,16 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"OWNER" | "SUPPLIER">("OWNER");
+
+  // Jika dibuka di aplikasi terpasang (PWA standalone), alihkan ke login
+  useEffect(() => {
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+    if (isStandalone) {
+      router.replace("/login?client=app");
+    }
+  }, [router]);
 
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<

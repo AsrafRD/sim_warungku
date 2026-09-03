@@ -16,6 +16,13 @@ export default async function OrdersPage({
   const storeDbId = await validateStoreAccess(storeId);
   if (!storeDbId) redirect("/");
 
+  const sub = await db.subscription.findUnique({
+    where: { storeId: storeDbId },
+  });
+  if (!sub?.hasWebAccess) {
+    redirect(`/${storeId}`);
+  }
+
   const rawOrders = await db.order.findMany({
     where: { storeId: storeDbId },
     orderBy: { createdAt: "desc" },

@@ -16,6 +16,13 @@ export default async function CustomersPage({
     redirect("/");
   }
 
+  const sub = await db.subscription.findUnique({
+    where: { storeId: storeDbId },
+  });
+  if (!sub?.hasWebAccess) {
+    redirect(`/${storeId}`);
+  }
+
   const limit = 20;
   
   // 1. Fetch total piutang

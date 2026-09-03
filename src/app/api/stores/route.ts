@@ -21,6 +21,7 @@ export async function POST(req: Request) {
     if (!session?.user?.id) {
       return NextResponse.json({ success: false, message: "Anda harus login terlebih dahulu" }, { status: 401 });
     }
+    const userId = session.user.id;
 
     const body = await req.json();
     const parsed = createStoreSchema.safeParse(body);
@@ -36,13 +37,31 @@ export async function POST(req: Request) {
     const { name, address } = parsed.data;
     const slug = generateSlug(name);
 
-    const store = await db.store.create({
-      data: {
-        name,
-        slug,
-        address,
-        ownerId: session.user.id,
-      },
+    const trialEndsAt = new Date();
+    trialEndsAt.setDate(trialEndsAt.getDate() + 14);
+
+    const store = await db.$transaction(async (tx) => {
+      const newStore = await tx.store.create({
+        data: {
+          name,
+          slug,
+          address,
+          ownerId: userId,
+        },
+      });
+
+      await tx.subscription.create({
+        data: {
+          storeId: newStore.id,
+          plan: "TRIAL",
+          status: "TRIAL",
+          trialEndsAt,
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: trialEndsAt,
+        },
+      });
+
+      return newStore;
     });
 
     return NextResponse.json({ 

@@ -64,7 +64,9 @@ export const ModelName = {
   StockOpnameItem: 'StockOpnameItem',
   StockLog: 'StockLog',
   Category: 'Category',
-  Unit: 'Unit'
+  Unit: 'Unit',
+  Subscription: 'Subscription',
+  SupplierTokenTransaction: 'SupplierTokenTransaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -90,6 +92,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   phone: 'phone',
+  supplierStoreQuota: 'supplierStoreQuota',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -281,6 +284,39 @@ export const UnitScalarFieldEnum = {
 } as const
 
 export type UnitScalarFieldEnum = (typeof UnitScalarFieldEnum)[keyof typeof UnitScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  storeId: 'storeId',
+  plan: 'plan',
+  status: 'status',
+  hasWebAccess: 'hasWebAccess',
+  amount: 'amount',
+  midtransOrderId: 'midtransOrderId',
+  midtransPaymentType: 'midtransPaymentType',
+  trialEndsAt: 'trialEndsAt',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const SupplierTokenTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokensPurchased: 'tokensPurchased',
+  storesAdded: 'storesAdded',
+  amount: 'amount',
+  midtransOrderId: 'midtransOrderId',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type SupplierTokenTransactionScalarFieldEnum = (typeof SupplierTokenTransactionScalarFieldEnum)[keyof typeof SupplierTokenTransactionScalarFieldEnum]
 
 
 export const SortOrder = {

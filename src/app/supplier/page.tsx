@@ -3,20 +3,31 @@ import { db } from "@/lib/prisma";
 import { Store, ArrowRight, Package, LogOut } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { SupplierQuotaCard } from "@/components/modules/supplier/supplier-quota-card";
+import { getMidtransConfig } from "@/lib/midtrans";
 
 export default async function SupplierStoresPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/");
 
-  const supplierProfiles = await db.supplier.findMany({
-    where: { userId: session.user.id },
-    include: {
-      store: true,
-      _count: {
-        select: { products: true }
+  const [supplierProfiles, user] = await Promise.all([
+    db.supplier.findMany({
+      where: { userId: session.user.id },
+      include: {
+        store: true,
+        _count: {
+          select: { products: true }
+        }
       }
-    }
-  });
+    }),
+    db.user.findUnique({
+      where: { id: session.user.id },
+      select: { supplierStoreQuota: true }
+    })
+  ]);
+
+  const midtrans = getMidtransConfig();
+  const quota = user?.supplierStoreQuota || 10;
 
   return (
     <div className="flex-1 p-6 pb-24 overflow-y-auto">
@@ -34,6 +45,14 @@ export default async function SupplierStoresPage() {
           <LogOut className="size-5" />
         </Link>
       </div>
+
+      {/* Supplier Store Quota & Token Topup */}
+      <SupplierQuotaCard
+        linkedCount={supplierProfiles.length}
+        quota={quota}
+        clientKey={midtrans.clientKey}
+        isProduction={midtrans.isProduction}
+      />
 
       {supplierProfiles.length === 0 ? (
         <div className="text-center py-12 px-4 rounded-2xl bg-[#FBC02D]/10 border border-dashed border-[#FF8F00]/30">

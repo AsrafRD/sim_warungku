@@ -20,8 +20,18 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  supplierStoreQuota: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  supplierStoreQuota: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -31,6 +41,7 @@ export type UserMinAggregateOutputType = {
   password: string | null
   role: $Enums.Role | null
   phone: string | null
+  supplierStoreQuota: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -42,6 +53,7 @@ export type UserMaxAggregateOutputType = {
   password: string | null
   role: $Enums.Role | null
   phone: string | null
+  supplierStoreQuota: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,11 +65,20 @@ export type UserCountAggregateOutputType = {
   password: number
   role: number
   phone: number
+  supplierStoreQuota: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  supplierStoreQuota?: true
+}
+
+export type UserSumAggregateInputType = {
+  supplierStoreQuota?: true
+}
 
 export type UserMinAggregateInputType = {
   id?: true
@@ -66,6 +87,7 @@ export type UserMinAggregateInputType = {
   password?: true
   role?: true
   phone?: true
+  supplierStoreQuota?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,6 +99,7 @@ export type UserMaxAggregateInputType = {
   password?: true
   role?: true
   phone?: true
+  supplierStoreQuota?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -88,6 +111,7 @@ export type UserCountAggregateInputType = {
   password?: true
   role?: true
   phone?: true
+  supplierStoreQuota?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -131,6 +155,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -161,6 +197,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -172,9 +210,12 @@ export type UserGroupByOutputType = {
   password: string
   role: $Enums.Role
   phone: string | null
+  supplierStoreQuota: number
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -204,12 +245,14 @@ export type UserWhereInput = {
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   phone?: Prisma.StringNullableFilter<"User"> | string | null
+  supplierStoreQuota?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   ownedStores?: Prisma.StoreListRelationFilter
   performedOpnames?: Prisma.StockOpnameListRelationFilter
   supplierProfiles?: Prisma.SupplierListRelationFilter
   performedShifts?: Prisma.ShiftListRelationFilter
+  supplierTokens?: Prisma.SupplierTokenTransactionListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -219,12 +262,14 @@ export type UserOrderByWithRelationInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  supplierStoreQuota?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   ownedStores?: Prisma.StoreOrderByRelationAggregateInput
   performedOpnames?: Prisma.StockOpnameOrderByRelationAggregateInput
   supplierProfiles?: Prisma.SupplierOrderByRelationAggregateInput
   performedShifts?: Prisma.ShiftOrderByRelationAggregateInput
+  supplierTokens?: Prisma.SupplierTokenTransactionOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -237,12 +282,14 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   phone?: Prisma.StringNullableFilter<"User"> | string | null
+  supplierStoreQuota?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   ownedStores?: Prisma.StoreListRelationFilter
   performedOpnames?: Prisma.StockOpnameListRelationFilter
   supplierProfiles?: Prisma.SupplierListRelationFilter
   performedShifts?: Prisma.ShiftListRelationFilter
+  supplierTokens?: Prisma.SupplierTokenTransactionListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -252,11 +299,14 @@ export type UserOrderByWithAggregationInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  supplierStoreQuota?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -269,6 +319,7 @@ export type UserScalarWhereWithAggregatesInput = {
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  supplierStoreQuota?: Prisma.IntWithAggregatesFilter<"User"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -280,12 +331,14 @@ export type UserCreateInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedStores?: Prisma.StoreCreateNestedManyWithoutOwnerInput
   performedOpnames?: Prisma.StockOpnameCreateNestedManyWithoutExecutorInput
   supplierProfiles?: Prisma.SupplierCreateNestedManyWithoutUserInput
   performedShifts?: Prisma.ShiftCreateNestedManyWithoutCashierInput
+  supplierTokens?: Prisma.SupplierTokenTransactionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -295,12 +348,14 @@ export type UserUncheckedCreateInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedStores?: Prisma.StoreUncheckedCreateNestedManyWithoutOwnerInput
   performedOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutExecutorInput
   supplierProfiles?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
   performedShifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutCashierInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -310,12 +365,14 @@ export type UserUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedStores?: Prisma.StoreUpdateManyWithoutOwnerNestedInput
   performedOpnames?: Prisma.StockOpnameUpdateManyWithoutExecutorNestedInput
   supplierProfiles?: Prisma.SupplierUpdateManyWithoutUserNestedInput
   performedShifts?: Prisma.ShiftUpdateManyWithoutCashierNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -325,12 +382,14 @@ export type UserUncheckedUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedStores?: Prisma.StoreUncheckedUpdateManyWithoutOwnerNestedInput
   performedOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutExecutorNestedInput
   supplierProfiles?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
   performedShifts?: Prisma.ShiftUncheckedUpdateManyWithoutCashierNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -340,6 +399,7 @@ export type UserCreateManyInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -351,6 +411,7 @@ export type UserUpdateManyMutationInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -362,6 +423,7 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -373,8 +435,13 @@ export type UserCountOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  supplierStoreQuota?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  supplierStoreQuota?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -384,6 +451,7 @@ export type UserMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  supplierStoreQuota?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -395,8 +463,13 @@ export type UserMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  supplierStoreQuota?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  supplierStoreQuota?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -419,6 +492,14 @@ export type EnumRoleFieldUpdateOperationsInput = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -483,6 +564,20 @@ export type UserUpdateOneRequiredWithoutPerformedOpnamesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPerformedOpnamesInput, Prisma.UserUpdateWithoutPerformedOpnamesInput>, Prisma.UserUncheckedUpdateWithoutPerformedOpnamesInput>
 }
 
+export type UserCreateNestedOneWithoutSupplierTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSupplierTokensInput, Prisma.UserUncheckedCreateWithoutSupplierTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSupplierTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSupplierTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSupplierTokensInput, Prisma.UserUncheckedCreateWithoutSupplierTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSupplierTokensInput
+  upsert?: Prisma.UserUpsertWithoutSupplierTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSupplierTokensInput, Prisma.UserUpdateWithoutSupplierTokensInput>, Prisma.UserUncheckedUpdateWithoutSupplierTokensInput>
+}
+
 export type UserCreateWithoutOwnedStoresInput = {
   id?: string
   email: string
@@ -490,11 +585,13 @@ export type UserCreateWithoutOwnedStoresInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   performedOpnames?: Prisma.StockOpnameCreateNestedManyWithoutExecutorInput
   supplierProfiles?: Prisma.SupplierCreateNestedManyWithoutUserInput
   performedShifts?: Prisma.ShiftCreateNestedManyWithoutCashierInput
+  supplierTokens?: Prisma.SupplierTokenTransactionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOwnedStoresInput = {
@@ -504,11 +601,13 @@ export type UserUncheckedCreateWithoutOwnedStoresInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   performedOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutExecutorInput
   supplierProfiles?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
   performedShifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutCashierInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOwnedStoresInput = {
@@ -534,11 +633,13 @@ export type UserUpdateWithoutOwnedStoresInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   performedOpnames?: Prisma.StockOpnameUpdateManyWithoutExecutorNestedInput
   supplierProfiles?: Prisma.SupplierUpdateManyWithoutUserNestedInput
   performedShifts?: Prisma.ShiftUpdateManyWithoutCashierNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedStoresInput = {
@@ -548,11 +649,13 @@ export type UserUncheckedUpdateWithoutOwnedStoresInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   performedOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutExecutorNestedInput
   supplierProfiles?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
   performedShifts?: Prisma.ShiftUncheckedUpdateManyWithoutCashierNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSupplierProfilesInput = {
@@ -562,11 +665,13 @@ export type UserCreateWithoutSupplierProfilesInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedStores?: Prisma.StoreCreateNestedManyWithoutOwnerInput
   performedOpnames?: Prisma.StockOpnameCreateNestedManyWithoutExecutorInput
   performedShifts?: Prisma.ShiftCreateNestedManyWithoutCashierInput
+  supplierTokens?: Prisma.SupplierTokenTransactionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSupplierProfilesInput = {
@@ -576,11 +681,13 @@ export type UserUncheckedCreateWithoutSupplierProfilesInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedStores?: Prisma.StoreUncheckedCreateNestedManyWithoutOwnerInput
   performedOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutExecutorInput
   performedShifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutCashierInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSupplierProfilesInput = {
@@ -606,11 +713,13 @@ export type UserUpdateWithoutSupplierProfilesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedStores?: Prisma.StoreUpdateManyWithoutOwnerNestedInput
   performedOpnames?: Prisma.StockOpnameUpdateManyWithoutExecutorNestedInput
   performedShifts?: Prisma.ShiftUpdateManyWithoutCashierNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSupplierProfilesInput = {
@@ -620,11 +729,13 @@ export type UserUncheckedUpdateWithoutSupplierProfilesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedStores?: Prisma.StoreUncheckedUpdateManyWithoutOwnerNestedInput
   performedOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutExecutorNestedInput
   performedShifts?: Prisma.ShiftUncheckedUpdateManyWithoutCashierNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPerformedShiftsInput = {
@@ -634,11 +745,13 @@ export type UserCreateWithoutPerformedShiftsInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedStores?: Prisma.StoreCreateNestedManyWithoutOwnerInput
   performedOpnames?: Prisma.StockOpnameCreateNestedManyWithoutExecutorInput
   supplierProfiles?: Prisma.SupplierCreateNestedManyWithoutUserInput
+  supplierTokens?: Prisma.SupplierTokenTransactionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPerformedShiftsInput = {
@@ -648,11 +761,13 @@ export type UserUncheckedCreateWithoutPerformedShiftsInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedStores?: Prisma.StoreUncheckedCreateNestedManyWithoutOwnerInput
   performedOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutExecutorInput
   supplierProfiles?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPerformedShiftsInput = {
@@ -678,11 +793,13 @@ export type UserUpdateWithoutPerformedShiftsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedStores?: Prisma.StoreUpdateManyWithoutOwnerNestedInput
   performedOpnames?: Prisma.StockOpnameUpdateManyWithoutExecutorNestedInput
   supplierProfiles?: Prisma.SupplierUpdateManyWithoutUserNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPerformedShiftsInput = {
@@ -692,11 +809,13 @@ export type UserUncheckedUpdateWithoutPerformedShiftsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedStores?: Prisma.StoreUncheckedUpdateManyWithoutOwnerNestedInput
   performedOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutExecutorNestedInput
   supplierProfiles?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPerformedOpnamesInput = {
@@ -706,11 +825,13 @@ export type UserCreateWithoutPerformedOpnamesInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedStores?: Prisma.StoreCreateNestedManyWithoutOwnerInput
   supplierProfiles?: Prisma.SupplierCreateNestedManyWithoutUserInput
   performedShifts?: Prisma.ShiftCreateNestedManyWithoutCashierInput
+  supplierTokens?: Prisma.SupplierTokenTransactionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPerformedOpnamesInput = {
@@ -720,11 +841,13 @@ export type UserUncheckedCreateWithoutPerformedOpnamesInput = {
   password: string
   role?: $Enums.Role
   phone?: string | null
+  supplierStoreQuota?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ownedStores?: Prisma.StoreUncheckedCreateNestedManyWithoutOwnerInput
   supplierProfiles?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
   performedShifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutCashierInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPerformedOpnamesInput = {
@@ -750,11 +873,13 @@ export type UserUpdateWithoutPerformedOpnamesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedStores?: Prisma.StoreUpdateManyWithoutOwnerNestedInput
   supplierProfiles?: Prisma.SupplierUpdateManyWithoutUserNestedInput
   performedShifts?: Prisma.ShiftUpdateManyWithoutCashierNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPerformedOpnamesInput = {
@@ -764,9 +889,91 @@ export type UserUncheckedUpdateWithoutPerformedOpnamesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ownedStores?: Prisma.StoreUncheckedUpdateManyWithoutOwnerNestedInput
+  supplierProfiles?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
+  performedShifts?: Prisma.ShiftUncheckedUpdateManyWithoutCashierNestedInput
+  supplierTokens?: Prisma.SupplierTokenTransactionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSupplierTokensInput = {
+  id?: string
+  email: string
+  name: string
+  password: string
+  role?: $Enums.Role
+  phone?: string | null
+  supplierStoreQuota?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ownedStores?: Prisma.StoreCreateNestedManyWithoutOwnerInput
+  performedOpnames?: Prisma.StockOpnameCreateNestedManyWithoutExecutorInput
+  supplierProfiles?: Prisma.SupplierCreateNestedManyWithoutUserInput
+  performedShifts?: Prisma.ShiftCreateNestedManyWithoutCashierInput
+}
+
+export type UserUncheckedCreateWithoutSupplierTokensInput = {
+  id?: string
+  email: string
+  name: string
+  password: string
+  role?: $Enums.Role
+  phone?: string | null
+  supplierStoreQuota?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ownedStores?: Prisma.StoreUncheckedCreateNestedManyWithoutOwnerInput
+  performedOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutExecutorInput
+  supplierProfiles?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
+  performedShifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutCashierInput
+}
+
+export type UserCreateOrConnectWithoutSupplierTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSupplierTokensInput, Prisma.UserUncheckedCreateWithoutSupplierTokensInput>
+}
+
+export type UserUpsertWithoutSupplierTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSupplierTokensInput, Prisma.UserUncheckedUpdateWithoutSupplierTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSupplierTokensInput, Prisma.UserUncheckedCreateWithoutSupplierTokensInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSupplierTokensInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSupplierTokensInput, Prisma.UserUncheckedUpdateWithoutSupplierTokensInput>
+}
+
+export type UserUpdateWithoutSupplierTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedStores?: Prisma.StoreUpdateManyWithoutOwnerNestedInput
+  performedOpnames?: Prisma.StockOpnameUpdateManyWithoutExecutorNestedInput
+  supplierProfiles?: Prisma.SupplierUpdateManyWithoutUserNestedInput
+  performedShifts?: Prisma.ShiftUpdateManyWithoutCashierNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSupplierTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supplierStoreQuota?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ownedStores?: Prisma.StoreUncheckedUpdateManyWithoutOwnerNestedInput
+  performedOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutExecutorNestedInput
   supplierProfiles?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
   performedShifts?: Prisma.ShiftUncheckedUpdateManyWithoutCashierNestedInput
 }
@@ -781,6 +988,7 @@ export type UserCountOutputType = {
   performedOpnames: number
   supplierProfiles: number
   performedShifts: number
+  supplierTokens: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -788,6 +996,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   performedOpnames?: boolean | UserCountOutputTypeCountPerformedOpnamesArgs
   supplierProfiles?: boolean | UserCountOutputTypeCountSupplierProfilesArgs
   performedShifts?: boolean | UserCountOutputTypeCountPerformedShiftsArgs
+  supplierTokens?: boolean | UserCountOutputTypeCountSupplierTokensArgs
 }
 
 /**
@@ -828,6 +1037,13 @@ export type UserCountOutputTypeCountPerformedShiftsArgs<ExtArgs extends runtime.
   where?: Prisma.ShiftWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSupplierTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplierTokenTransactionWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -836,12 +1052,14 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   password?: boolean
   role?: boolean
   phone?: boolean
+  supplierStoreQuota?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   ownedStores?: boolean | Prisma.User$ownedStoresArgs<ExtArgs>
   performedOpnames?: boolean | Prisma.User$performedOpnamesArgs<ExtArgs>
   supplierProfiles?: boolean | Prisma.User$supplierProfilesArgs<ExtArgs>
   performedShifts?: boolean | Prisma.User$performedShiftsArgs<ExtArgs>
+  supplierTokens?: boolean | Prisma.User$supplierTokensArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -852,6 +1070,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   role?: boolean
   phone?: boolean
+  supplierStoreQuota?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -863,6 +1082,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   role?: boolean
   phone?: boolean
+  supplierStoreQuota?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -874,16 +1094,18 @@ export type UserSelectScalar = {
   password?: boolean
   role?: boolean
   phone?: boolean
+  supplierStoreQuota?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "password" | "role" | "phone" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "password" | "role" | "phone" | "supplierStoreQuota" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ownedStores?: boolean | Prisma.User$ownedStoresArgs<ExtArgs>
   performedOpnames?: boolean | Prisma.User$performedOpnamesArgs<ExtArgs>
   supplierProfiles?: boolean | Prisma.User$supplierProfilesArgs<ExtArgs>
   performedShifts?: boolean | Prisma.User$performedShiftsArgs<ExtArgs>
+  supplierTokens?: boolean | Prisma.User$supplierTokensArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -896,6 +1118,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     performedOpnames: Prisma.$StockOpnamePayload<ExtArgs>[]
     supplierProfiles: Prisma.$SupplierPayload<ExtArgs>[]
     performedShifts: Prisma.$ShiftPayload<ExtArgs>[]
+    supplierTokens: Prisma.$SupplierTokenTransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -904,6 +1127,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     password: string
     role: $Enums.Role
     phone: string | null
+    supplierStoreQuota: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1304,6 +1528,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   performedOpnames<T extends Prisma.User$performedOpnamesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$performedOpnamesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockOpnamePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supplierProfiles<T extends Prisma.User$supplierProfilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supplierProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   performedShifts<T extends Prisma.User$performedShiftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$performedShiftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShiftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supplierTokens<T extends Prisma.User$supplierTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supplierTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierTokenTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1339,6 +1564,7 @@ export interface UserFieldRefs {
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly phone: Prisma.FieldRef<"User", 'String'>
+  readonly supplierStoreQuota: Prisma.FieldRef<"User", 'Int'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -1827,6 +2053,30 @@ export type User$performedShiftsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ShiftScalarFieldEnum | Prisma.ShiftScalarFieldEnum[]
+}
+
+/**
+ * User.supplierTokens
+ */
+export type User$supplierTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupplierTokenTransaction
+   */
+  select?: Prisma.SupplierTokenTransactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupplierTokenTransaction
+   */
+  omit?: Prisma.SupplierTokenTransactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplierTokenTransactionInclude<ExtArgs> | null
+  where?: Prisma.SupplierTokenTransactionWhereInput
+  orderBy?: Prisma.SupplierTokenTransactionOrderByWithRelationInput | Prisma.SupplierTokenTransactionOrderByWithRelationInput[]
+  cursor?: Prisma.SupplierTokenTransactionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupplierTokenTransactionScalarFieldEnum | Prisma.SupplierTokenTransactionScalarFieldEnum[]
 }
 
 /**

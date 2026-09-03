@@ -18,6 +18,7 @@ import {
   User as UserIcon,
   Warehouse,
 } from "lucide-react";
+import { BillingReminderBanner } from "@/components/modules/subscription/billing-reminder-banner";
 
 export default async function ProfilePage({
   params,
@@ -34,6 +35,7 @@ export default async function ProfilePage({
 
   const store = await db.store.findUnique({
     where: { id: storeDbId },
+    include: { subscription: true },
   });
 
   return (
@@ -117,6 +119,21 @@ export default async function ProfilePage({
             </div>
           </div>
         </section>
+
+        {/* ================= SUBSCRIPTION & BILLING ================= */}
+        {store?.subscription && (
+          <div className="-mx-4">
+            <BillingReminderBanner
+              storeId={store.id}
+              storeName={store.name}
+              status={store.subscription.status}
+              plan={store.subscription.plan}
+              hasWebAccess={store.subscription.hasWebAccess}
+              trialEndsAt={store.subscription.trialEndsAt ? store.subscription.trialEndsAt.toISOString() : null}
+              currentPeriodEnd={store.subscription.currentPeriodEnd ? store.subscription.currentPeriodEnd.toISOString() : null}
+            />
+          </div>
+        )}
 
         {/* ================= SETTINGS ================= */}
         <section className="mt-5 rounded-2xl border border-[#F5F5DC] bg-white shadow-sm">

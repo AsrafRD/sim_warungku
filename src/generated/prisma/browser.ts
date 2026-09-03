@@ -87,3 +87,13 @@ export type Category = Prisma.CategoryModel
  * 
  */
 export type Unit = Prisma.UnitModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model SupplierTokenTransaction
+ * 
+ */
+export type SupplierTokenTransaction = Prisma.SupplierTokenTransactionModel

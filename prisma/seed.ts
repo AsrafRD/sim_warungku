@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { db as prisma } from '../src/lib/prisma';
 
 function randomInt(min: number, max: number) {
@@ -9,6 +10,8 @@ function addDays(date: Date, days: number) {
   result.setDate(result.getDate() + days);
   return result;
 }
+
+let invoiceCounter = 1000;
 
 async function main() {
   console.log('🌱 Starting comprehensive database seeding...');
@@ -25,16 +28,19 @@ async function main() {
   await prisma.supplier.deleteMany();
   await prisma.category.deleteMany();
   await prisma.unit.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.supplierTokenTransaction.deleteMany();
   await prisma.store.deleteMany();
   await prisma.user.deleteMany();
 
   // --- CORE ENTITIES ---
   console.log('👤 Creating Owner & Store...');
+  const hashedPassword = await bcrypt.hash('Testdev123', 10);
   const user = await prisma.user.create({
     data: {
       email: 'owner@warung.com',
       name: 'Bapak Haji',
-      password: 'Testdev123',
+      password: hashedPassword,
       role: 'OWNER',
     },
   });
@@ -46,6 +52,19 @@ async function main() {
       ownerId: user.id,
       address: 'Jl. Merdeka No. 45, Bandung',
       phone: '081234567890',
+    },
+  });
+
+  // Buat langganan aktif untuk warung-berkah (Paket Mobile Pro Utama)
+  await prisma.subscription.create({
+    data: {
+      storeId: store.id,
+      plan: 'MOBILE_MONTHLY',
+      status: 'ACTIVE',
+      hasWebAccess: false,
+      amount: 49000,
+      currentPeriodStart: new Date(),
+      currentPeriodEnd: addDays(new Date(), 30),
     },
   });
 
@@ -197,7 +216,8 @@ async function main() {
       }
 
       // Create Order
-      const invoiceNo = `INV-${orderDate.getFullYear()}${(orderDate.getMonth() + 1).toString().padStart(2, '0')}${orderDate.getDate().toString().padStart(2, '0')}-${randomInt(1000, 9999)}`;
+      const datePrefix = `${orderDate.getFullYear()}${(orderDate.getMonth() + 1).toString().padStart(2, '0')}${orderDate.getDate().toString().padStart(2, '0')}`;
+      const invoiceNo = `INV-${datePrefix}-${invoiceCounter++}`;
       
       await prisma.order.create({
         data: {

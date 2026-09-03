@@ -70,6 +70,20 @@ export async function POST(req: Request) {
       if (existingUser.role !== "SUPPLIER") {
         return NextResponse.json({ success: false, message: "Email ini terdaftar sebagai Owner/Admin, bukan akun Supplier." }, { status: 400 });
       }
+
+      // Validasi kuota toko supplier (10 toko per token)
+      const linkedStoresCount = await db.supplier.count({
+        where: { userId: existingUser.id },
+      });
+      const maxQuota = existingUser.supplierStoreQuota || 10;
+
+      if (linkedStoresCount >= maxQuota) {
+        return NextResponse.json({
+          success: false,
+          message: `Supplier ini telah mencapai batas kuota (${maxQuota} toko). Supplier wajib membeli token kuota tambahan (+10 toko) di portal supplier terlebih dahulu.`,
+        }, { status: 400 });
+      }
+
       userId = existingUser.id;
     }
 

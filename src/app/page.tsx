@@ -169,31 +169,51 @@ export default async function Home() {
             <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
           </Link>
 
-          <a
-            href="/warungku-v1.0.0.apk"
-            download
+          {/* Tombol Demo Sandbox Web Trial */}
+          <Link
+            href="/trial"
             className="
               group
               mt-3 flex h-14 w-full
               items-center justify-center gap-2
               rounded-2xl
+              bg-white
               border-2 border-[#FF8F00]
-              bg-white/80 backdrop-blur-sm
               text-lg font-black text-[#FF8F00]
+              shadow-sm
               transition-all
-              hover:bg-white
+              hover:bg-orange-50/50
               hover:shadow-[0_10px_25px_rgba(255,143,0,0.15)]
               active:scale-[0.97]
             "
           >
-            <Smartphone className="size-5" />
-            Download Android App
+            <Box className="size-5" />
+            Coba Demo Kasir Gratis (Trial)
+          </Link>
+
+          <a
+            href="/warungku-v1.0.0.apk"
+            download
+            className="
+              group
+              mt-3 flex h-12 w-full
+              items-center justify-center gap-2
+              rounded-xl
+              bg-slate-900/5
+              text-sm font-bold text-slate-700
+              transition-all
+              hover:bg-slate-900/10
+              active:scale-[0.98]
+            "
+          >
+            <Smartphone className="size-4" />
+            Download APK Client (Khusus Kasir)
           </a>
 
           <p className="mt-4 text-center text-xs font-medium text-slate-500">
             {isLoggedIn
               ? "Anda sudah masuk ke sistem"
-              : "Gratis selamanya untuk fitur dasar"}
+              : "Coba langsung di browser tanpa perlu daftar akun"}
           </p>
 
         </div>

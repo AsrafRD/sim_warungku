@@ -43,6 +43,33 @@ export async function openShift(storeId: string, openingBalance: number) {
       return { success: false, message: "Akses ditolak" };
     }
 
+    // Verifikasi status lisensi toko
+    const sub = await db.subscription.findUnique({
+      where: { storeId: storeDbId },
+    });
+
+    if (sub) {
+      const now = new Date();
+      if (sub.status === "ACTIVE" && sub.currentPeriodEnd && sub.currentPeriodEnd < now) {
+        return {
+          success: false,
+          message: "Masa aktif langganan toko telah berakhir. Silakan perpanjang lisensi toko Anda.",
+        };
+      }
+      if (sub.status === "TRIAL" && sub.trialEndsAt && sub.trialEndsAt < now) {
+        return {
+          success: false,
+          message: "Masa trial 14 hari toko Anda telah berakhir. Silakan aktifkan paket langganan resmi.",
+        };
+      }
+      if (sub.status === "EXPIRED" || sub.status === "CANCELLED") {
+        return {
+          success: false,
+          message: "Lisensi toko tidak aktif. Silakan aktifkan paket langganan toko Anda.",
+        };
+      }
+    }
+
     // Check if there's already an open shift
     const existing = await db.shift.findFirst({
       where: {

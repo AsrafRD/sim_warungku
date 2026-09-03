@@ -207,6 +207,7 @@ export type StoreWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Store"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Store"> | Date | string
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   suppliers?: Prisma.SupplierListRelationFilter
   products?: Prisma.ProductListRelationFilter
   orders?: Prisma.OrderListRelationFilter
@@ -228,6 +229,7 @@ export type StoreOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   owner?: Prisma.UserOrderByWithRelationInput
+  subscription?: Prisma.SubscriptionOrderByWithRelationInput
   suppliers?: Prisma.SupplierOrderByRelationAggregateInput
   products?: Prisma.ProductOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
@@ -252,6 +254,7 @@ export type StoreWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Store"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Store"> | Date | string
   owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   suppliers?: Prisma.SupplierListRelationFilter
   products?: Prisma.ProductListRelationFilter
   orders?: Prisma.OrderListRelationFilter
@@ -300,6 +303,7 @@ export type StoreCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
@@ -320,6 +324,7 @@ export type StoreUncheckedCreateInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
@@ -340,6 +345,7 @@ export type StoreUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
@@ -360,6 +366,7 @@ export type StoreUncheckedUpdateInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
@@ -619,6 +626,20 @@ export type StoreUpdateOneRequiredWithoutUnitsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StoreUpdateToOneWithWhereWithoutUnitsInput, Prisma.StoreUpdateWithoutUnitsInput>, Prisma.StoreUncheckedUpdateWithoutUnitsInput>
 }
 
+export type StoreCreateNestedOneWithoutSubscriptionInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutSubscriptionInput, Prisma.StoreUncheckedCreateWithoutSubscriptionInput>
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutSubscriptionInput
+  connect?: Prisma.StoreWhereUniqueInput
+}
+
+export type StoreUpdateOneRequiredWithoutSubscriptionNestedInput = {
+  create?: Prisma.XOR<Prisma.StoreCreateWithoutSubscriptionInput, Prisma.StoreUncheckedCreateWithoutSubscriptionInput>
+  connectOrCreate?: Prisma.StoreCreateOrConnectWithoutSubscriptionInput
+  upsert?: Prisma.StoreUpsertWithoutSubscriptionInput
+  connect?: Prisma.StoreWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StoreUpdateToOneWithWhereWithoutSubscriptionInput, Prisma.StoreUpdateWithoutSubscriptionInput>, Prisma.StoreUncheckedUpdateWithoutSubscriptionInput>
+}
+
 export type StoreCreateWithoutOwnerInput = {
   id?: string
   name: string
@@ -627,6 +648,7 @@ export type StoreCreateWithoutOwnerInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
@@ -646,6 +668,7 @@ export type StoreUncheckedCreateWithoutOwnerInput = {
   phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
@@ -706,6 +729,7 @@ export type StoreCreateWithoutSuppliersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
   stockOpnames?: Prisma.StockOpnameCreateNestedManyWithoutStoreInput
@@ -725,6 +749,7 @@ export type StoreUncheckedCreateWithoutSuppliersInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
   stockOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutStoreInput
@@ -760,6 +785,7 @@ export type StoreUpdateWithoutSuppliersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
   stockOpnames?: Prisma.StockOpnameUpdateManyWithoutStoreNestedInput
@@ -779,6 +805,7 @@ export type StoreUncheckedUpdateWithoutSuppliersInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
   stockOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutStoreNestedInput
@@ -798,6 +825,7 @@ export type StoreCreateWithoutCustomersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
@@ -817,6 +845,7 @@ export type StoreUncheckedCreateWithoutCustomersInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
@@ -852,6 +881,7 @@ export type StoreUpdateWithoutCustomersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
@@ -871,6 +901,7 @@ export type StoreUncheckedUpdateWithoutCustomersInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
@@ -890,6 +921,7 @@ export type StoreCreateWithoutProductsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
   stockOpnames?: Prisma.StockOpnameCreateNestedManyWithoutStoreInput
@@ -909,6 +941,7 @@ export type StoreUncheckedCreateWithoutProductsInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
   stockOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutStoreInput
@@ -944,6 +977,7 @@ export type StoreUpdateWithoutProductsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
   stockOpnames?: Prisma.StockOpnameUpdateManyWithoutStoreNestedInput
@@ -963,6 +997,7 @@ export type StoreUncheckedUpdateWithoutProductsInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
   stockOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutStoreNestedInput
@@ -982,6 +1017,7 @@ export type StoreCreateWithoutShiftsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
@@ -1001,6 +1037,7 @@ export type StoreUncheckedCreateWithoutShiftsInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
@@ -1036,6 +1073,7 @@ export type StoreUpdateWithoutShiftsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
@@ -1055,6 +1093,7 @@ export type StoreUncheckedUpdateWithoutShiftsInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
@@ -1074,6 +1113,7 @@ export type StoreCreateWithoutOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   stockOpnames?: Prisma.StockOpnameCreateNestedManyWithoutStoreInput
@@ -1093,6 +1133,7 @@ export type StoreUncheckedCreateWithoutOrdersInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   stockOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutStoreInput
@@ -1128,6 +1169,7 @@ export type StoreUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   stockOpnames?: Prisma.StockOpnameUpdateManyWithoutStoreNestedInput
@@ -1147,6 +1189,7 @@ export type StoreUncheckedUpdateWithoutOrdersInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   stockOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutStoreNestedInput
@@ -1166,6 +1209,7 @@ export type StoreCreateWithoutStockOpnamesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
@@ -1185,6 +1229,7 @@ export type StoreUncheckedCreateWithoutStockOpnamesInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
@@ -1220,6 +1265,7 @@ export type StoreUpdateWithoutStockOpnamesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
@@ -1239,6 +1285,7 @@ export type StoreUncheckedUpdateWithoutStockOpnamesInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
@@ -1258,6 +1305,7 @@ export type StoreCreateWithoutStockLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
@@ -1277,6 +1325,7 @@ export type StoreUncheckedCreateWithoutStockLogsInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
@@ -1312,6 +1361,7 @@ export type StoreUpdateWithoutStockLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
@@ -1331,6 +1381,7 @@ export type StoreUncheckedUpdateWithoutStockLogsInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
@@ -1350,6 +1401,7 @@ export type StoreCreateWithoutCategoriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
@@ -1369,6 +1421,7 @@ export type StoreUncheckedCreateWithoutCategoriesInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
@@ -1404,6 +1457,7 @@ export type StoreUpdateWithoutCategoriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
@@ -1423,6 +1477,7 @@ export type StoreUncheckedUpdateWithoutCategoriesInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
@@ -1442,6 +1497,7 @@ export type StoreCreateWithoutUnitsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
@@ -1461,6 +1517,7 @@ export type StoreUncheckedCreateWithoutUnitsInput = {
   ownerId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutStoreInput
   suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
@@ -1496,6 +1553,7 @@ export type StoreUpdateWithoutUnitsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
@@ -1515,6 +1573,7 @@ export type StoreUncheckedUpdateWithoutUnitsInput = {
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
@@ -1523,6 +1582,102 @@ export type StoreUncheckedUpdateWithoutUnitsInput = {
   shifts?: Prisma.ShiftUncheckedUpdateManyWithoutStoreNestedInput
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutStoreNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutStoreNestedInput
+}
+
+export type StoreCreateWithoutSubscriptionInput = {
+  id?: string
+  name: string
+  slug: string
+  address?: string | null
+  phone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  owner: Prisma.UserCreateNestedOneWithoutOwnedStoresInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutStoreInput
+  products?: Prisma.ProductCreateNestedManyWithoutStoreInput
+  orders?: Prisma.OrderCreateNestedManyWithoutStoreInput
+  stockOpnames?: Prisma.StockOpnameCreateNestedManyWithoutStoreInput
+  stockLogs?: Prisma.StockLogCreateNestedManyWithoutStoreInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutStoreInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutStoreInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutStoreInput
+  units?: Prisma.UnitCreateNestedManyWithoutStoreInput
+}
+
+export type StoreUncheckedCreateWithoutSubscriptionInput = {
+  id?: string
+  name: string
+  slug: string
+  address?: string | null
+  phone?: string | null
+  ownerId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutStoreInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutStoreInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutStoreInput
+  stockOpnames?: Prisma.StockOpnameUncheckedCreateNestedManyWithoutStoreInput
+  stockLogs?: Prisma.StockLogUncheckedCreateNestedManyWithoutStoreInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutStoreInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutStoreInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutStoreInput
+  units?: Prisma.UnitUncheckedCreateNestedManyWithoutStoreInput
+}
+
+export type StoreCreateOrConnectWithoutSubscriptionInput = {
+  where: Prisma.StoreWhereUniqueInput
+  create: Prisma.XOR<Prisma.StoreCreateWithoutSubscriptionInput, Prisma.StoreUncheckedCreateWithoutSubscriptionInput>
+}
+
+export type StoreUpsertWithoutSubscriptionInput = {
+  update: Prisma.XOR<Prisma.StoreUpdateWithoutSubscriptionInput, Prisma.StoreUncheckedUpdateWithoutSubscriptionInput>
+  create: Prisma.XOR<Prisma.StoreCreateWithoutSubscriptionInput, Prisma.StoreUncheckedCreateWithoutSubscriptionInput>
+  where?: Prisma.StoreWhereInput
+}
+
+export type StoreUpdateToOneWithWhereWithoutSubscriptionInput = {
+  where?: Prisma.StoreWhereInput
+  data: Prisma.XOR<Prisma.StoreUpdateWithoutSubscriptionInput, Prisma.StoreUncheckedUpdateWithoutSubscriptionInput>
+}
+
+export type StoreUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  owner?: Prisma.UserUpdateOneRequiredWithoutOwnedStoresNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
+  products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
+  stockOpnames?: Prisma.StockOpnameUpdateManyWithoutStoreNestedInput
+  stockLogs?: Prisma.StockLogUpdateManyWithoutStoreNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutStoreNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutStoreNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutStoreNestedInput
+  units?: Prisma.UnitUpdateManyWithoutStoreNestedInput
+}
+
+export type StoreUncheckedUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
+  stockOpnames?: Prisma.StockOpnameUncheckedUpdateManyWithoutStoreNestedInput
+  stockLogs?: Prisma.StockLogUncheckedUpdateManyWithoutStoreNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutStoreNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutStoreNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutStoreNestedInput
+  units?: Prisma.UnitUncheckedUpdateManyWithoutStoreNestedInput
 }
 
 export type StoreCreateManyOwnerInput = {
@@ -1543,6 +1698,7 @@ export type StoreUpdateWithoutOwnerInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUpdateManyWithoutStoreNestedInput
@@ -1562,6 +1718,7 @@ export type StoreUncheckedUpdateWithoutOwnerInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutStoreNestedInput
   suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutStoreNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutStoreNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutStoreNestedInput
@@ -1696,6 +1853,7 @@ export type StoreSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   updatedAt?: boolean
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  subscription?: boolean | Prisma.Store$subscriptionArgs<ExtArgs>
   suppliers?: boolean | Prisma.Store$suppliersArgs<ExtArgs>
   products?: boolean | Prisma.Store$productsArgs<ExtArgs>
   orders?: boolean | Prisma.Store$ordersArgs<ExtArgs>
@@ -1746,6 +1904,7 @@ export type StoreSelectScalar = {
 export type StoreOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "address" | "phone" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["store"]>
 export type StoreInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  subscription?: boolean | Prisma.Store$subscriptionArgs<ExtArgs>
   suppliers?: boolean | Prisma.Store$suppliersArgs<ExtArgs>
   products?: boolean | Prisma.Store$productsArgs<ExtArgs>
   orders?: boolean | Prisma.Store$ordersArgs<ExtArgs>
@@ -1768,6 +1927,7 @@ export type $StorePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Store"
   objects: {
     owner: Prisma.$UserPayload<ExtArgs>
+    subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
     suppliers: Prisma.$SupplierPayload<ExtArgs>[]
     products: Prisma.$ProductPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
@@ -2182,6 +2342,7 @@ readonly fields: StoreFieldRefs;
 export interface Prisma__StoreClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   owner<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  subscription<T extends Prisma.Store$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Store$subscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   suppliers<T extends Prisma.Store$suppliersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Store$suppliersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   products<T extends Prisma.Store$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Store$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.Store$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Store$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2626,6 +2787,25 @@ export type StoreDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Stores to delete.
    */
   limit?: number
+}
+
+/**
+ * Store.subscription
+ */
+export type Store$subscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
 }
 
 /**

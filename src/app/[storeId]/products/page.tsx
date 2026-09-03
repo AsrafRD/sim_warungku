@@ -10,6 +10,9 @@ import { ProductCard } from "@/components/modules/product/product-card";
 import { ProductSearch } from "@/components/modules/product/product-search";
 import { getProducts } from "@/actions/product.actions";
 import { ProductListClient } from "./product-list-client";
+import { validateStoreAccess } from "@/lib/auth";
+import { db } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 interface ProductsPageProps {
   params: Promise<{ storeId: string }>;
@@ -25,6 +28,16 @@ export default async function ProductsPage({
 }: ProductsPageProps) {
   const { storeId } = await params;
   const { search, page } = await searchParams;
+
+  const storeDbId = await validateStoreAccess(storeId);
+  if (!storeDbId) redirect("/");
+
+  const sub = await db.subscription.findUnique({
+    where: { storeId: storeDbId },
+  });
+  if (!sub?.hasWebAccess) {
+    redirect(`/${storeId}`);
+  }
 
   const result = await getProducts(storeId, {
     search: search ?? undefined,

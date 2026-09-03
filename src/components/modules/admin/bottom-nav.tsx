@@ -52,10 +52,15 @@ const navItems: NavItem[] = [
   },
 ];
 
-export function BottomNav() {
+export function BottomNav({ hasWebAccess = false }: { hasWebAccess?: boolean }) {
   const params = useParams<{ storeId: string }>();
   const pathname = usePathname();
   const storeId = params.storeId;
+
+  // Sesuai aturan bisnis: Paket Mobile Only hanya dapat melihat Dashboard & Profil di website
+  const visibleItems = hasWebAccess
+    ? navItems
+    : navItems.filter((item) => item.href === "" || item.href === "/profile");
 
   return (
     <nav
@@ -69,7 +74,7 @@ export function BottomNav() {
     >
       <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2">
 
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const href = `/${storeId}${item.href}`;
 
           const isActive =
